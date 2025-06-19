@@ -9,6 +9,8 @@ namespace TP4_LEANDRO.Controladores
     internal class Adminitrador
     {
         //cooomo,md dd
+        //hshsjsiasks
+        //pruba
 
     }
 }

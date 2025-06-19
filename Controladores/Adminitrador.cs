@@ -8,6 +8,7 @@ namespace TP4_LEANDRO.Controladores
 {
     internal class Adminitrador
     {
-        //cooomooo
+        //cooomo,md dd
+
     }
 }

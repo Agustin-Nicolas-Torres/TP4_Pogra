@@ -52,8 +52,7 @@ namespace TP4_LEANDRO
 
         // Controles para login
         private TextBox txtLoginNombre = null!;
-        private TextBox txtLoginApellido = null!;
-        private TextBox txtLoginDNI = null!;
+        private TextBox txtLoginContraseña = null!;
         private Button btnLoginEntrar = null!;
 
         // Controles para el menú principal
@@ -260,12 +259,11 @@ namespace TP4_LEANDRO
                 Size = new Size(450, 400),
                 BackColor = Color.White
             };
-            txtLoginNombre = new TextBox { PlaceholderText = "Nombre", Top = 80, Left = 100, Width = 250 };
-            txtLoginApellido = new TextBox { PlaceholderText = "Apellido", Top = 140, Left = 100, Width = 250 };
-            txtLoginDNI = new TextBox { PlaceholderText = "DNI", Top = 200, Left = 100, Width = 250 };
+            txtLoginNombre = new TextBox { PlaceholderText = "Usuario", Top = 80, Left = 100, Width = 250 };
+            txtLoginContraseña = new TextBox { PlaceholderText = "Contraseña", Top = 140, Left = 100, Width = 250 };
             btnLoginEntrar = new Button { Text = "Entrar", Top = 260, Left = 100, Width = 250, Height = 40, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
             btnLoginEntrar.Click += BtnLoginEntrar_Click;
-            panelLogin.Controls.AddRange(new Control[] { txtLoginNombre, txtLoginApellido, txtLoginDNI, btnLoginEntrar });
+            panelLogin.Controls.AddRange(new Control[] { txtLoginNombre, txtLoginContraseña, btnLoginEntrar });
             this.Controls.Add(panelLogin);
 
             // Panel Menú Principal (centrado)
@@ -491,22 +489,20 @@ namespace TP4_LEANDRO
         private void BtnLoginEntrar_Click(object? sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtLoginNombre.Text) ||
-                string.IsNullOrWhiteSpace(txtLoginApellido.Text) ||
-                string.IsNullOrWhiteSpace(txtLoginDNI.Text))
+                string.IsNullOrWhiteSpace(txtLoginContraseña.Text))
             {
                 MostrarAviso("Datos requeridos", "Debe completar todos los campos para ingresar.");
                 return;
             }
 
-            lblUsuario.Text = $"Bienvenido, {txtLoginNombre.Text} {txtLoginApellido.Text}";
+            lblUsuario.Text = $"Bienvenido, {txtLoginNombre.Text}";
             panelLogin.Visible = false;
             panelMenu.Visible = true;
             CentrarPanel(panelMenu);
             clienteActual = new Cliente
             {
-                Nombre = txtLoginNombre.Text,
-                Apellido = txtLoginApellido.Text,
-                DNI = txtLoginDNI.Text
+                Usuario = txtLoginNombre.Text,
+                Contraseña = txtLoginContraseña.Text
             };
         }
 
@@ -887,9 +883,8 @@ namespace TP4_LEANDRO
         private bool ClienteDatosCompletos()
         {
             return clienteActual != null &&
-                   !string.IsNullOrWhiteSpace(clienteActual.Nombre) &&
-                   !string.IsNullOrWhiteSpace(clienteActual.Apellido) &&
-                   !string.IsNullOrWhiteSpace(clienteActual.DNI);
+                   !string.IsNullOrWhiteSpace(clienteActual.Usuario) &&
+                   !string.IsNullOrWhiteSpace(clienteActual.Contraseña);
         }
     }
 }

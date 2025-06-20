@@ -257,11 +257,41 @@ namespace TP4_LEANDRO
             panelLogin = new Panel
             {
                 Size = new Size(450, 400),
-                BackColor = Color.White
+                BackColor = Color.White,
+                Location = new Point((this.ClientSize.Width - 450) / 2, (this.ClientSize.Height - 400) / 2),
+                Anchor = AnchorStyles.None
             };
-            txtLoginNombre = new TextBox { PlaceholderText = "Usuario", Top = 80, Left = 100, Width = 250 };
-            txtLoginContraseña = new TextBox { PlaceholderText = "Contraseña", Top = 140, Left = 100, Width = 250 };
-            btnLoginEntrar = new Button { Text = "Entrar", Top = 260, Left = 100, Width = 250, Height = 40, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
+
+            txtLoginNombre = new TextBox
+            {
+                PlaceholderText = "Usuario",
+                Width = panelLogin.Width - 100,
+                Left = (panelLogin.Width - (panelLogin.Width - 100)) / 2,
+                Top = 80,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
+            txtLoginContraseña = new TextBox
+            {
+                PlaceholderText = "Contraseña",
+                Width = panelLogin.Width - 100,
+                Left = (panelLogin.Width - (panelLogin.Width - 100)) / 2,
+                Top = 140,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
+            btnLoginEntrar = new Button
+            {
+                Text = "Entrar",
+                Width = panelLogin.Width - 100,
+                Height = 40,
+                Left = (panelLogin.Width - (panelLogin.Width - 100)) / 2,
+                Top = 260,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
             btnLoginEntrar.Click += BtnLoginEntrar_Click;
             panelLogin.Controls.AddRange(new Control[] { txtLoginNombre, txtLoginContraseña, btnLoginEntrar });
             this.Controls.Add(panelLogin);
@@ -425,7 +455,7 @@ namespace TP4_LEANDRO
             // Validación de datos de cliente solo para botones laterales
             if (btn.Parent == panelMenuLateral && !ClienteDatosCompletos())
             {
-                MostrarAviso("Datos requeridos", "Debe ingresar su Nombre, Apellido y DNI antes de continuar.");
+                MostrarAviso("Datos requeridos", "Debe ingresar su Usuario y Contraseña correctamente.");
                 return;
             }
 
@@ -879,7 +909,8 @@ namespace TP4_LEANDRO
             btn.Click += click;
             return btn;
         }
-
+         
+        //Parametro para que no se pueda usar nada a menos que haya un usuario iniciado en la aplicacion
         private bool ClienteDatosCompletos()
         {
             return clienteActual != null &&

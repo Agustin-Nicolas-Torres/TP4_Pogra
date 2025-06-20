@@ -116,7 +116,7 @@ namespace TP4_LEANDRO
             };
             lblUsuario = new Label
             {
-                Text = $"Bienvenido",
+                Text = $"Bienvenido", // Texto por defecto, se actualizará al iniciar sesión
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 AutoSize = true,

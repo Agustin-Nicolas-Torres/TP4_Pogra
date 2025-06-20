@@ -11,7 +11,7 @@ namespace TP4_LEANDRO
     {
         // Paneles principales
         private Panel panelHeader = null!;
-        private Panel panelMenuLateral = null!;
+        private Panel panelMenuLateral = null!; 
         private Panel panelLogin = null!;
         private Panel panelMenu = null!;
         private Panel panelPedido = null!;
@@ -142,20 +142,13 @@ namespace TP4_LEANDRO
                 Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom
             };
 
-            btnLateralInicio = CrearBotonLateral("INICIO", 30, (s, e) => MostrarPanelMenu());
-            btnLateralHacerEnvio = CrearBotonLateral("HACER UN ENVÍO", 90, (s, e) => MostrarPanelPedido());
-            btnLateralVerEnvios = CrearBotonLateral("VER MIS ENVÍOS", 150, (s, e) => MostrarPanelListaPedidos());
-            btnLateralPreguntas = CrearBotonLateral("PREGUNTAS FRECUENTES", 210, (s, e) =>
-                MostrarAviso("Preguntas Frecuentes",
-                    "1. ¿Cuánto tarda un envío?\nR: Entre 24 y 72hs hábiles.\n\n" +
-                    "2. ¿Puedo cancelar un envío?\nR: Sí, desde la sección 'Ver mis envíos'.\n\n" +
-                    "3. ¿Cómo hago seguimiento de mi pedido?\nR: Desde 'Ver mis envíos' o con el número de seguimiento.\n\n"
-                ));
-            btnLateralSucursales = CrearBotonLateral("SUCURSALES", 270, (s, e) =>
-                MostrarAviso("Sucursales",
-                    "Sucursal Centro: Av. Principal 123\nSucursal Norte: Calle 456\nSucursal Sur: Ruta 789\nSucursal Oeste: Av. Libertad 321\nSucursal Este: Calle 789"
-                ));
-            btnLateralAyuda = CrearBotonLateral("AYUDA", 330, (s, e) => MostrarPanelSoporte());
+            // Asignación de eventos centralizada con switch
+            btnLateralInicio = CrearBotonLateral("INICIO", 30, BotonMenu_Click);
+            btnLateralHacerEnvio = CrearBotonLateral("HACER UN ENVÍO", 90, BotonMenu_Click);
+            btnLateralVerEnvios = CrearBotonLateral("VER MIS ENVÍOS", 150, BotonMenu_Click);
+            btnLateralPreguntas = CrearBotonLateral("PREGUNTAS FRECUENTES", 210, BotonMenu_Click);
+            btnLateralSucursales = CrearBotonLateral("SUCURSALES", 270, BotonMenu_Click);
+            btnLateralAyuda = CrearBotonLateral("AYUDA", 330, BotonMenu_Click);
 
             panelMenuLateral.Controls.AddRange(new Control[] {
                 btnLateralInicio, btnLateralHacerEnvio, btnLateralVerEnvios,
@@ -285,10 +278,10 @@ namespace TP4_LEANDRO
             btnMenuHistorial = new Button { Text = "Ver Historial de Pedidos", Top = 180, Left = 100, Width = 250, Height = 50, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
             btnMenuSalir = new Button { Text = "Salir", Top = 340, Left = 100, Width = 250, Height = 50, BackColor = Color.Gray, ForeColor = Color.White };
             btnMenuAyuda = new Button { Text = "Ayuda", Top = 260, Left = 100, Width = 250, Height = 50, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
-            btnMenuAgregarPedido.Click += (s, e) => MostrarPanelPedido();
-            btnMenuHistorial.Click += (s, e) => MostrarPanelListaPedidos();
-            btnMenuSalir.Click += (s, e) => this.Close();
-            btnMenuAyuda.Click += (s, e) => MostrarPanelSoporte();
+            btnMenuAgregarPedido.Click += BotonMenu_Click;
+            btnMenuHistorial.Click += BotonMenu_Click;
+            btnMenuSalir.Click += BotonMenu_Click;
+            btnMenuAyuda.Click += BotonMenu_Click;
             panelMenu.Controls.AddRange(new Control[] { btnMenuAgregarPedido, btnMenuHistorial, btnMenuSalir, btnMenuAyuda });
             this.Controls.Add(panelMenu);
 
@@ -427,6 +420,54 @@ namespace TP4_LEANDRO
             panelSoporte.Visible = false;
         }
 
+        private void BotonMenu_Click(object? sender, EventArgs e)
+        {
+            if (sender is not Button btn) return;
+
+            // Validación de datos de cliente solo para botones laterales
+            if (btn.Parent == panelMenuLateral && !ClienteDatosCompletos())
+            {
+                MostrarAviso("Datos requeridos", "Debe ingresar su Nombre, Apellido y DNI antes de continuar.");
+                return;
+            }
+
+            switch (btn.Text)
+            {
+                case "INICIO":
+                    MostrarPanelMenu();
+                    break;
+                case "HACER UN ENVÍO":
+                case "Agregar Pedido":
+                    MostrarPanelPedido();
+                    break;
+                case "VER MIS ENVÍOS":
+                case "Ver Historial de Pedidos":
+                    MostrarPanelListaPedidos();
+                    break;
+                case "PREGUNTAS FRECUENTES":
+                    MostrarAviso("Preguntas Frecuentes",
+                        "1. ¿Cuánto tarda un envío?\nR: Entre 24 y 72hs hábiles.\n\n" +
+                        "2. ¿Puedo cancelar un envío?\nR: Sí, desde la sección 'Ver mis envíos'.\n\n" +
+                        "3. ¿Cómo hago seguimiento de mi pedido?\nR: Desde 'Ver mis envíos' o con el número de seguimiento.\n\n"
+                    );
+                    break;
+                case "SUCURSALES":
+                    MostrarAviso("Sucursales",
+                        "Sucursal Centro: Av. Principal 123\nSucursal Norte: Calle 456\nSucursal Sur: Ruta 789\nSucursal Oeste: Av. Libertad 321\nSucursal Este: Calle 789"
+                    );
+                    break;
+                case "AYUDA":
+                case "Ayuda":
+                    MostrarPanelSoporte();
+                    break;
+                case "Salir":
+                    this.Close();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void CentrarPanel(Panel panel)
         {
             int leftPanelWidth = panelMenuLateral?.Width ?? 0;
@@ -468,6 +509,8 @@ namespace TP4_LEANDRO
                 DNI = txtLoginDNI.Text
             };
         }
+
+
 
         private void MostrarPanelMenu()
         {
@@ -731,7 +774,7 @@ namespace TP4_LEANDRO
             pedidoEnEdicion = pedido;
 
             panelEditarPedido.Visible = true;
-            panelEditarPedido.BringToFront(); // <-- Esto asegura que el panel esté al frente
+            panelEditarPedido.BringToFront();
             CentrarPanel(panelEditarPedido);
         }
 
@@ -837,15 +880,7 @@ namespace TP4_LEANDRO
                 Cursor = Cursors.Hand,
                 TabStop = false
             };
-            btn.Click += (s, e) =>
-            {
-                if (!ClienteDatosCompletos())
-                {
-                    MostrarAviso("Datos requeridos", "Debe ingresar su Nombre, Apellido y DNI antes de continuar.");
-                    return;
-                }
-                click(s, e);
-            };
+            btn.Click += click;
             return btn;
         }
 

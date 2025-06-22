@@ -120,6 +120,23 @@ namespace TP4_LEANDRO
         private Button btnLateralTecnicoTickets = null!;
         private Button btnLateralTecnicoCerrarSesion = null!;
 
+        private Button btnLateralTecnicoEstadisticas = null!;
+        private Button btnLateralTecnicoHistorial = null!;
+        private Button btnLateralTecnicoConfiguracion = null!;
+        private Button btnLateralTecnicoAcerca = null!;
+        private Button btnLateralTecnicoActualizar = null!;
+
+        // Paneles para funcionalidades del técnico
+        private Panel panelEstadisticas = null!;
+        private Panel panelHistorial = null!;
+        private Panel panelConfiguracion = null!;
+        private Panel panelAcerca = null!;
+        private Panel panelInicioTecnico = null!;
+        private Label lblInicioTecnicoResumen = null!;
+        private ListView listViewPendientes = null!;
+        private ListView listViewResueltos = null!;
+        private Button btnInicioTecnicoVolver = null!;
+
         public Form1()
         {
             InitializeComponent();
@@ -206,7 +223,7 @@ namespace TP4_LEANDRO
             panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
             this.Controls.Add(panelPrincipal);
 
-            //
+            
             // Panel Técnico
             panelTecnico = new Panel
             {
@@ -327,10 +344,11 @@ namespace TP4_LEANDRO
                 Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom,
                 Visible = false
             };
+
             btnLateralTecnicoTickets = new Button
             {
                 Text = "Ver Tickets",
-                Top = 30,
+                Top = 50,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -343,10 +361,337 @@ namespace TP4_LEANDRO
             };
             btnLateralTecnicoTickets.Click += (s, e) => MostrarPanelTecnicoTickets();
 
+            btnLateralTecnicoEstadisticas = new Button
+            {
+                Text = "Estadísticas",
+                Top = 100,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            // Panel Estadísticas
+            panelEstadisticas = new Panel
+            {
+                Size = new Size(600, 400),
+                BackColor = Color.White,
+                Visible = false,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            var lblEstadisticas = new Label
+            {
+                Text = "Estadísticas de Tickets y Pedidos",
+                Font = new Font("Segoe UI", 15, FontStyle.Bold),
+                ForeColor = Color.FromArgb(33, 150, 243),
+                Top = 30,
+                Left = 30,
+                Width = 540
+            };
+            var lblEstadisticasInfo = new Label
+            {
+                Text = $"Total de tickets: {consultasSoporte.Count}\nTickets atendidos: {consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido)}\nPedidos totales: {pedidos.Count}",
+                Font = new Font("Segoe UI", 12),
+                Top = 80,
+                Left = 30,
+                Width = 540,
+                Height = 100
+            };
+            var btnEstadisticasVolver = new Button
+            {
+                Text = "Volver",
+                Top = 340,
+                Left = 240,
+                Width = 120,
+                Height = 40,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnEstadisticasVolver.Click += (s, e) => panelEstadisticas.Visible = false;
+            panelEstadisticas.Controls.AddRange(new Control[] { lblEstadisticas, lblEstadisticasInfo, btnEstadisticasVolver });
+            this.Controls.Add(panelEstadisticas);
+
+            // Panel Historial
+            panelHistorial = new Panel
+            {
+                Size = new Size(900, 600),
+                BackColor = Color.FromArgb(250, 250, 250), // Color más claro para diferenciarlo
+                Visible = false,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            var lblHistorial = new Label
+            {
+                Text = "Historial de Tickets de Clientes",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 36, 31),
+                Top = 30,
+                Left = 30,
+                Width = 800
+            };
+            var listViewHistorial = new ListView
+            {
+                Name = "listViewHistorial",
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 80,
+                Left = 30,
+                Width = 820,
+                Height = 400
+            };
+            listViewHistorial.Columns.Add("Fecha", 120);
+            listViewHistorial.Columns.Add("Cliente", 180);
+            listViewHistorial.Columns.Add("Email", 200);
+            listViewHistorial.Columns.Add("Mensaje", 300);
+            var btnHistorialVolver = new Button
+            {
+                Text = "Volver",
+                Top = 500,
+                Left = 380,
+                Width = 140,
+                Height = 50,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold)
+            };
+            // Panel Inicio Técnico
+            panelInicioTecnico = new Panel
+            {
+                Size = new Size(900, 600),
+                BackColor = Color.FromArgb(245, 245, 245),
+                Visible = false,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            lblInicioTecnicoResumen = new Label
+            {
+                Text = "Resumen de Tickets",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 36, 31),
+                Top = 30,
+                Left = 30,
+                Width = 800
+            };
+            var lblPendientes = new Label
+            {
+                Text = "Tickets Pendientes",
+                Font = new Font("Segoe UI", 13, FontStyle.Bold),
+                Top = 90,
+                Left = 30,
+                Width = 300
+            };
+            listViewPendientes = new ListView
+            {
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 120,
+                Left = 30,
+                Width = 400,
+                Height = 350,
+                Name = "listViewPendientes"
+            };
+            listViewPendientes.Columns.Add("Fecha", 120);
+            listViewPendientes.Columns.Add("Cliente", 120);
+            listViewPendientes.Columns.Add("Mensaje", 150);
+
+            var lblResueltos = new Label
+            {
+                Text = "Tickets Resueltos",
+                Font = new Font("Segoe UI", 13, FontStyle.Bold),
+                Top = 90,
+                Left = 470,
+                Width = 300
+            };
+            listViewResueltos = new ListView
+            {
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 120,
+                Left = 470,
+                Width = 400,
+                Height = 350,
+                Name = "listViewResueltos"
+            };
+            listViewResueltos.Columns.Add("Fecha", 120);
+            listViewResueltos.Columns.Add("Cliente", 120);
+            listViewResueltos.Columns.Add("Mensaje", 150);
+
+            btnInicioTecnicoVolver = new Button
+            {
+                Text = "Volver",
+                Top = 500,
+                Left = 380,
+                Width = 140,
+                Height = 50,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold)
+            };
+            btnInicioTecnicoVolver.Click += (s, e) =>
+            {
+                panelInicioTecnico.Visible = false;
+                panelTecnico.Visible = true;
+                CentrarPanel(panelTecnico);
+            };
+            var btnLateralTecnicoInicio = new Button
+            {
+                Text = "Inicio",
+                Top = 10,
+                Left = 10,
+                Width = 200,
+                Height = 35,
+                BackColor = Color.FromArgb(220, 36, 31), 
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoInicio.Click += (s, e) => MostrarPanelInicioTecnico();
+            panelMenuLateralTecnico.Controls.Add(btnLateralTecnicoInicio);
+
+            panelInicioTecnico.Controls.AddRange(new Control[] {
+    lblInicioTecnicoResumen, lblPendientes, listViewPendientes, lblResueltos, listViewResueltos, btnInicioTecnicoVolver
+});
+            this.Controls.Add(panelInicioTecnico);
+            btnHistorialVolver.Click += (s, e) => panelHistorial.Visible = false;
+            panelHistorial.Controls.AddRange(new Control[] { lblHistorial, listViewHistorial, btnHistorialVolver });
+            this.Controls.Add(panelHistorial);
+
+            // Panel Configuración
+            panelConfiguracion = new Panel
+            {
+                Size = new Size(400, 300),
+                BackColor = Color.White,
+                Visible = false,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            var lblConfiguracion = new Label
+            {
+                Text = "Configuración del Sistema (próximamente)",
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                ForeColor = Color.FromArgb(255, 193, 7),
+                Top = 30,
+                Left = 30,
+                Width = 340
+            };
+            var btnConfiguracionVolver = new Button
+            {
+                Text = "Volver",
+                Top = 200,
+                Left = 140,
+                Width = 120,
+                Height = 40,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnConfiguracionVolver.Click += (s, e) => panelConfiguracion.Visible = false;
+            panelConfiguracion.Controls.AddRange(new Control[] { lblConfiguracion, btnConfiguracionVolver });
+            this.Controls.Add(panelConfiguracion);
+
+            // Panel Acerca de
+            panelAcerca = new Panel
+            {
+                Size = new Size(400, 250),
+                BackColor = Color.White,
+                Visible = false,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+            var lblAcerca = new Label
+            {
+                Text = "Sistema de gestión de paquetería\nVersión 1.0\nDesarrollado por el equipo.",
+                Font = new Font("Segoe UI", 12, FontStyle.Regular),
+                ForeColor = Color.FromArgb(158, 158, 158),
+                Top = 30,
+                Left = 30,
+                Width = 340,
+                Height = 100
+            };
+            var btnAcercaVolver = new Button
+            {
+                Text = "Volver",
+                Top = 150,
+                Left = 140,
+                Width = 120,
+                Height = 40,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnAcercaVolver.Click += (s, e) => panelAcerca.Visible = false;
+            panelAcerca.Controls.AddRange(new Control[] { lblAcerca, btnAcercaVolver });
+            this.Controls.Add(panelAcerca);
+            btnLateralTecnicoEstadisticas.Click += (s, e) => MostrarAviso("Estadísticas", "Aquí se mostrarán estadísticas de tickets y paquetería.");
+
+            btnLateralTecnicoHistorial = new Button
+            {
+                Text = "Historial de Tickets",
+                Top = 160,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoHistorial.Click += (s, e) => MostrarPanelHistorial();
+
+            btnLateralTecnicoConfiguracion = new Button
+            {
+                Text = "Configuración",
+                Top = 220,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoConfiguracion.Click += (s, e) => MostrarAviso("Configuración", "Aquí podrá modificar la configuración del sistema.");
+
+            btnLateralTecnicoAcerca = new Button
+            {
+                Text = "Acerca de",
+                Top = 280,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoAcerca.Click += (s, e) => MostrarAviso("Acerca de", "Sistema de gestión de paquetería.\nVersión 1.0\nDesarrollado por el equipo.");
+
+            btnLateralTecnicoActualizar = new Button
+            {
+                Text = "Actualizar",
+                Top = 340,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoActualizar.Click += (s, e) => CargarTicketsTecnico();
+
             btnLateralTecnicoCerrarSesion = new Button
             {
                 Text = "Cerrar Sesión",
-                Top = 90,
+                Top = 400,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -359,8 +704,19 @@ namespace TP4_LEANDRO
             };
             btnLateralTecnicoCerrarSesion.Click += (s, e) => CerrarSesionTecnico();
 
-            panelMenuLateralTecnico.Controls.AddRange(new Control[] { btnLateralTecnicoTickets, btnLateralTecnicoCerrarSesion });
+            panelMenuLateralTecnico.Controls.AddRange(new Control[] {
+                btnLateralTecnicoTickets,
+                btnLateralTecnicoEstadisticas,
+                btnLateralTecnicoHistorial,
+                btnLateralTecnicoConfiguracion,
+                btnLateralTecnicoAcerca,
+                btnLateralTecnicoActualizar,
+                btnLateralTecnicoCerrarSesion
+            });
             this.Controls.Add(panelMenuLateralTecnico);
+
+            panelMenuLateralTecnico.Controls.AddRange(new Control[] { btnLateralTecnicoTickets, btnLateralTecnicoCerrarSesion });
+
 
 
             // Panel lateral izquierdo para el menú principal
@@ -705,6 +1061,7 @@ namespace TP4_LEANDRO
             panelTecnico.Visible = false;
             panelLoginTecnico.Visible = true;
             CentrarPanel(panelLoginTecnico);
+            panelLoginTecnico.BringToFront();
         }
 
         private void MostrarPanelAdministrador()
@@ -1268,16 +1625,117 @@ namespace TP4_LEANDRO
 
         private void MostrarPanelTecnicoTickets()
         {
+            OcultarPanelesTecnico();
             panelTecnico.Visible = true;
             CentrarPanel(panelTecnico);
+            panelTecnico.BringToFront();
             CargarTicketsTecnico();
         }
+        
 
         private void CerrarSesionTecnico()
         {
             panelMenuLateralTecnico.Visible = false;
             panelTecnico.Visible = false;
             panelPrincipal.Visible = true;
+        }
+
+        private void MostrarPanelEstadisticas()
+        {
+            OcultarPanelesTecnico();
+            var lbl = (Label)panelEstadisticas.Controls[1];
+            lbl.Text = $"Total de tickets: {consultasSoporte.Count}\nTickets atendidos: {consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido)}\nPedidos totales: {pedidos.Count}";
+            panelEstadisticas.Visible = true;
+            CentrarPanel(panelEstadisticas);
+            panelEstadisticas.BringToFront();
+        }
+
+        private void MostrarPanelHistorial()
+        {
+            OcultarPanelesTecnico();
+            var listView = panelHistorial.Controls["listViewHistorial"] as ListView;
+            if (listView == null) return;
+
+            listView.Items.Clear();
+            foreach (var ticket in consultasSoporte)
+            {
+                var item = new ListViewItem(new[]
+                {
+            ticket.Fecha.ToString("dd/MM/yyyy HH:mm"),
+            ticket.NombreCliente,
+            ticket.Email,
+            ticket.Mensaje
+        });
+                listView.Items.Add(item);
+            }
+            panelHistorial.Visible = true;
+            panelHistorial.BringToFront();
+            CentrarPanel(panelHistorial);
+        }
+
+
+        private void MostrarPanelConfiguracion()
+        {
+            OcultarPanelesTecnico();
+            panelConfiguracion.Visible = true;
+            CentrarPanel(panelConfiguracion);
+            panelConfiguracion.BringToFront();
+        }
+
+        private void MostrarPanelAcerca()
+        {
+            OcultarPanelesTecnico();
+            panelAcerca.Visible = true;
+            CentrarPanel(panelAcerca);
+            panelAcerca.BringToFront();
+        }
+
+        private void MostrarPanelInicioTecnico()
+        {
+            OcultarPanelesTecnico();
+            // Resumen
+            int pendientes = consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => !t.Atendido);
+            int resueltos = consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido);
+            lblInicioTecnicoResumen.Text = $"Resumen de Tickets - Pendientes: {pendientes} | Resueltos: {resueltos}";
+
+            // Llenar pendientes
+            listViewPendientes.Items.Clear();
+            foreach (var ticket in consultasSoporte.OfType<ConsultaSoporteExtendido>().Where(t => !t.Atendido))
+            {
+                var item = new ListViewItem(new[]
+                {
+            ticket.Fecha.ToString("dd/MM/yyyy HH:mm"),
+            ticket.NombreCliente,
+            ticket.Mensaje
+        });
+                listViewPendientes.Items.Add(item);
+            }
+
+            // Llenar resueltos
+            listViewResueltos.Items.Clear();
+            foreach (var ticket in consultasSoporte.OfType<ConsultaSoporteExtendido>().Where(t => t.Atendido))
+            {
+                var item = new ListViewItem(new[]
+                {
+            ticket.Fecha.ToString("dd/MM/yyyy HH:mm"),
+            ticket.NombreCliente,
+            ticket.Mensaje
+        });
+                listViewResueltos.Items.Add(item);
+            }
+            panelInicioTecnico.Visible = true;
+            CentrarPanel(panelInicioTecnico);
+            panelInicioTecnico.BringToFront();
+        }
+
+        private void OcultarPanelesTecnico()
+        {
+            panelTecnico.Visible = false;
+            panelInicioTecnico.Visible = false;
+            panelEstadisticas.Visible = false;
+            panelHistorial.Visible = false;
+            panelConfiguracion.Visible = false;
+            panelAcerca.Visible = false;
         }
     }
 }

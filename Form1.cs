@@ -9,6 +9,12 @@ namespace TP4_LEANDRO
 {
     public partial class Form1 : Form
     {
+
+        // 1. Declara el panel y botones al inicio de la clase
+        private Panel panelPrincipal = null!;
+        private Button btnPrincipalAdmin = null!;
+        private Button btnPrincipalTecnico = null!;
+        private Button btnPrincipalCliente = null!;
         // Paneles principales
         private Panel panelHeader = null!;
         private Panel panelMenuLateral = null!; 
@@ -96,6 +102,24 @@ namespace TP4_LEANDRO
         private List<ConsultaSoporte> consultasSoporte = new();
         private Dictionary<string, string> comentarios = new();
 
+        private Panel panelTecnico = null!;
+        private ListView listViewTecnicoTickets = null!;
+        private Button btnTecnicoAtender = null!;
+        private Button btnTecnicoVerCliente = null!;
+        private Button btnTecnicoVolver = null!;
+        private Label lblTecnicoTitulo = null!;
+
+        // Panel de login para técnico
+        private Panel panelLoginTecnico = null!;
+        private TextBox txtTecnicoUsuario = null!;
+        private TextBox txtTecnicoContraseña = null!;
+        private Button btnTecnicoLogin = null!;
+
+        // Panel lateral para técnico
+        private Panel panelMenuLateralTecnico = null!;
+        private Button btnLateralTecnicoTickets = null!;
+        private Button btnLateralTecnicoCerrarSesion = null!;
+
         public Form1()
         {
             InitializeComponent();
@@ -106,6 +130,8 @@ namespace TP4_LEANDRO
 
         private void InicializarPaneles()
         {
+
+
             // Header con usuario
             panelHeader = new Panel
             {
@@ -130,6 +156,212 @@ namespace TP4_LEANDRO
             {
                 lblUsuario.Left = panelHeader.Width - lblUsuario.Width - 30;
             };
+
+            panelPrincipal = new Panel
+            {
+                Size = new Size(500, 300),
+                BackColor = Color.White,
+                Location = new Point((this.ClientSize.Width - 500) / 2, (this.ClientSize.Height - 300) / 2),
+                Anchor = AnchorStyles.None
+            };
+            btnPrincipalAdmin = new Button
+            {
+                Text = "Administrador",
+                Top = 40,
+                Left = 150,
+                Width = 200,
+                Height = 50,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold)
+            };
+            btnPrincipalTecnico = new Button
+            {
+                Text = "Técnico",
+                Top = 120,
+                Left = 150,
+                Width = 200,
+                Height = 50,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold)
+            };
+            btnPrincipalCliente = new Button
+            {
+                Text = "Cliente",
+                Top = 200,
+                Left = 150,
+                Width = 200,
+                Height = 50,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 12, FontStyle.Bold)
+            };
+
+            // Asigna los eventos Click
+            btnPrincipalAdmin.Click += (s, e) => MostrarPanelAdministrador();
+            btnPrincipalTecnico.Click += (s, e) => MostrarPanelTecnico();
+            btnPrincipalCliente.Click += (s, e) => MostrarPanelCliente();
+
+            panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
+            this.Controls.Add(panelPrincipal);
+
+
+            // Panel Técnico
+            panelTecnico = new Panel
+            {
+                Size = new Size(700, 450),
+                BackColor = Color.White,
+                Visible = false
+            };
+            lblTecnicoTitulo = new Label
+            {
+                Text = "Tickets de Soporte - Técnico",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 36, 31),
+                Top = 20,
+                Left = 30,
+                Width = 500
+            };
+            listViewTecnicoTickets = new ListView
+            {
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 70,
+                Left = 30,
+                Width = 620,
+                Height = 250
+            };
+            listViewTecnicoTickets.Columns.Add("Fecha", 140);
+            listViewTecnicoTickets.Columns.Add("Cliente", 180);
+            listViewTecnicoTickets.Columns.Add("Mensaje", 280);
+            listViewTecnicoTickets.Columns.Add("Atendido", 80);
+
+            btnTecnicoAtender = new Button
+            {
+                Text = "Marcar como Atendido",
+                Top = 340,
+                Left = 30,
+                Width = 200,
+                Height = 40,
+                BackColor = Color.FromArgb(33, 150, 243),
+                ForeColor = Color.White
+            };
+            btnTecnicoAtender.Click += BtnTecnicoAtender_Click;
+
+            btnTecnicoVerCliente = new Button
+            {
+                Text = "Ver Cliente",
+                Top = 340,
+                Left = 250,
+                Width = 150,
+                Height = 40,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White
+            };
+            btnTecnicoVerCliente.Click += BtnTecnicoVerCliente_Click;
+
+            btnTecnicoVolver = new Button
+            {
+                Text = "Volver",
+                Top = 340,
+                Left = 420,
+                Width = 120,
+                Height = 40,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnTecnicoVolver.Click += (s, e) =>
+            {
+                panelTecnico.Visible = false;
+                panelPrincipal.Visible = true;
+                panelMenuLateral.Visible = false;
+            };
+
+            panelTecnico.Controls.AddRange(new Control[] { lblTecnicoTitulo, listViewTecnicoTickets, btnTecnicoAtender, btnTecnicoVerCliente, btnTecnicoVolver });
+            this.Controls.Add(panelTecnico);
+
+            // Panel de login para técnico
+            panelLoginTecnico = new Panel
+            {
+                Size = new Size(400, 300),
+                BackColor = Color.White,
+                Visible = false
+            };
+            txtTecnicoUsuario = new TextBox
+            {
+                PlaceholderText = "Usuario Técnico",
+                Width = 250,
+                Left = 75,
+                Top = 60
+            };
+            txtTecnicoContraseña = new TextBox
+            {
+                PlaceholderText = "Contraseña",
+                Width = 250,
+                Left = 75,
+                Top = 120,
+                UseSystemPasswordChar = true
+            };
+            btnTecnicoLogin = new Button
+            {
+                Text = "Entrar",
+                Width = 250,
+                Height = 40,
+                Left = 75,
+                Top = 180,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White
+            };
+            btnTecnicoLogin.Click += BtnTecnicoLogin_Click;
+            panelLoginTecnico.Controls.AddRange(new Control[] { txtTecnicoUsuario, txtTecnicoContraseña, btnTecnicoLogin });
+            this.Controls.Add(panelLoginTecnico);
+
+            // Panel lateral para técnico
+            panelMenuLateralTecnico = new Panel
+            {
+                Size = new Size(220, this.ClientSize.Height - panelHeader.Height),
+                BackColor = Color.FromArgb(245, 245, 245),
+                Left = 0,
+                Top = panelHeader.Height,
+                Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom,
+                Visible = false
+            };
+            btnLateralTecnicoTickets = new Button
+            {
+                Text = "Ver Tickets",
+                Top = 30,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoTickets.Click += (s, e) => MostrarPanelTecnicoTickets();
+
+            btnLateralTecnicoCerrarSesion = new Button
+            {
+                Text = "Cerrar Sesión",
+                Top = 90,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralTecnicoCerrarSesion.Click += (s, e) => CerrarSesionTecnico();
+
+            panelMenuLateralTecnico.Controls.AddRange(new Control[] { btnLateralTecnicoTickets, btnLateralTecnicoCerrarSesion });
+            this.Controls.Add(panelMenuLateralTecnico);
+
 
             // Panel lateral izquierdo para el menú principal
             panelMenuLateral = new Panel
@@ -446,8 +678,41 @@ namespace TP4_LEANDRO
             panelEstado.Visible = false;
             panelListaPedidos.Visible = false;
             panelSoporte.Visible = false;
+
+            panelPrincipal.Visible = true;
+            panelMenuLateral.Visible = false; 
+            panelLogin.Visible = false;
+            panelMenu.Visible = false;
+            panelPedido.Visible = false;
+            panelEstado.Visible = false;
+            panelListaPedidos.Visible = false;
+            panelSoporte.Visible = false;
         }
 
+        private void MostrarPanelCliente()
+        {
+            panelPrincipal.Visible = false;
+            panelMenuLateral.Visible = true; 
+            panelLogin.Visible = true;
+            CentrarPanel(panelLogin);
+        }
+
+        private void MostrarPanelTecnico()
+        {
+            panelPrincipal.Visible = false;
+            panelMenuLateral.Visible = false;
+            panelMenuLateralTecnico.Visible = false;
+            panelTecnico.Visible = false;
+            panelLoginTecnico.Visible = true;
+            CentrarPanel(panelLoginTecnico);
+        }
+
+        private void MostrarPanelAdministrador()
+        {
+            panelPrincipal.Visible = false;
+            // Aquí puedes mostrar el panel de administrador si lo tienes implementado
+            MostrarAviso("Panel Administrador", "Aquí irá la interfaz para el administrador.");
+        }
         private void BotonMenu_Click(object? sender, EventArgs e)
         {
             if (sender is not Button btn) return;
@@ -916,6 +1181,103 @@ namespace TP4_LEANDRO
             return clienteActual != null &&
                    !string.IsNullOrWhiteSpace(clienteActual.Usuario) &&
                    !string.IsNullOrWhiteSpace(clienteActual.Contraseña);
+        }
+
+        private void CargarTicketsTecnico()
+        {
+            listViewTecnicoTickets.Items.Clear();
+            foreach (var ticket in consultasSoporte)
+            {
+                // Puedes agregar una propiedad "Atendido" a ConsultaSoporte si lo deseas
+                string atendido = ticket is ConsultaSoporteExtendido ext && ext.Atendido ? "Sí" : "No";
+                var item = new ListViewItem(new[]
+                {
+            ticket.Fecha.ToString("dd/MM/yyyy HH:mm"),
+            ticket.NombreCliente,
+            ticket.Mensaje,
+            atendido
+        });
+                item.Tag = ticket;
+                listViewTecnicoTickets.Items.Add(item);
+            }
+        }
+
+        private void BtnTecnicoAtender_Click(object? sender, EventArgs e)
+        {
+            if (listViewTecnicoTickets.SelectedItems.Count == 0)
+            {
+                MostrarAviso("Atención", "Seleccione un ticket para marcar como atendido.");
+                return;
+            }
+            var item = listViewTecnicoTickets.SelectedItems[0];
+            if (item.Tag is ConsultaSoporteExtendido ticket)
+            {
+                ticket.Atendido = true;
+                CargarTicketsTecnico();
+                MostrarAviso("Ticket atendido", "El ticket fue marcado como atendido.");
+            }
+            else
+            {
+                MostrarAviso("Error", "No se pudo marcar el ticket.");
+            }
+        }
+
+        private void BtnTecnicoVerCliente_Click(object? sender, EventArgs e)
+        {
+            if (listViewTecnicoTickets.SelectedItems.Count == 0)
+            {
+                MostrarAviso("Atención", "Seleccione un ticket para ver el cliente.");
+                return;
+            }
+            var item = listViewTecnicoTickets.SelectedItems[0];
+            if (item.Tag is ConsultaSoporte ticket)
+            {
+                var cliente = pedidos.Select(p => p.Cliente).FirstOrDefault(c => $"{c.Nombre} {c.Apellido}" == ticket.NombreCliente);
+                if (cliente != null)
+                {
+                    string detalles = $"Nombre: {cliente.Nombre}\nApellido: {cliente.Apellido}\nDNI: {cliente.DNI}\nEmail: {cliente.Email}\nTeléfono: {cliente.Telefono}\nDirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
+                    MostrarAviso("Datos del Cliente", detalles);
+                }
+                else
+                {
+                    MostrarAviso("No encontrado", "No se encontró el cliente.");
+                }
+            }
+        }
+        public class ConsultaSoporteExtendido : ConsultaSoporte
+        {
+            public bool Atendido { get; set; }
+        }
+
+        private void BtnTecnicoLogin_Click(object? sender, EventArgs e)
+        {
+            // AGREGAR CON BASE DE DATOS   AGUSTIN TORRES
+            if (txtTecnicoUsuario.Text == "Leandro" && txtTecnicoContraseña.Text == "1234")
+            {
+                panelLoginTecnico.Visible = false;
+                panelMenuLateralTecnico.Visible = true;
+                panelTecnico.Visible = true;
+                CentrarPanel(panelTecnico);
+                CargarTicketsTecnico();
+            }
+            else
+            {
+                MostrarAviso("Login incorrecto", "Usuario o contraseña incorrectos.");
+            }
+        }
+
+        private void MostrarPanelTecnicoTickets()
+        {
+            panelTecnico.Visible = true;
+            CentrarPanel(panelTecnico);
+            CargarTicketsTecnico();
+        }
+
+        private void CerrarSesionTecnico()
+        {
+            panelMenuLateralTecnico.Visible = false;
+            panelTecnico.Visible = false;
+            panelPrincipal.Visible = true;
         }
     }
 }

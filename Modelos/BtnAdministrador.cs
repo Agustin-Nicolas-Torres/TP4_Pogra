@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP4_LEANDRO.Controladores
+namespace TP4_LEANDRO.Modelos
 {
-    internal class Adminitrador
+    internal class BtnAdministrador
     {
-        private Panel panelAdministrador = null!;
-
-
+        //Panel de administrador 
+        
     }
 }

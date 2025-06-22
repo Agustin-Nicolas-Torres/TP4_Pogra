@@ -1078,6 +1078,7 @@ namespace TP4_LEANDRO
             panelMenuLateral.Visible = false;
             panelMenuLateralTecnico.Visible = false;
             panelTecnico.Visible = false;
+            OcultarPanelesTecnico();
             panelLoginTecnico.Visible = true;
             CentrarPanel(panelLoginTecnico);
             panelLoginTecnico.BringToFront();
@@ -1639,7 +1640,59 @@ namespace TP4_LEANDRO
             }
             else
             {
-                MostrarAviso("Login incorrecto", "Usuario o contraseña incorrectos.");
+                // Ajustar tamaño y posición del panelAviso antes de crear el botón
+                panelAviso.Size = panelLoginTecnico.Size;
+                panelAviso.Location = panelLoginTecnico.Location;
+                panelAviso.BringToFront();
+
+                lblAvisoTitulo.Text = "Error de inicio de sesión";
+                lblAvisoMensaje.Text = "Usuario o Contraseña Incorrectos.";
+                btnAvisoCerrar.Visible = false;
+
+                // Buscar o crear el botón "Volver"
+                Button? btnVolver = null;
+                foreach (Control ctrl in panelAviso.Controls)
+                {
+                    if (ctrl is Button btn && btn.Name == "btnVolverAviso")
+                    {
+                        btnVolver = btn;
+                        break;
+                    }
+                }
+
+                if (btnVolver == null)
+                {
+                    btnVolver = new Button
+                    {
+                        Name = "btnVolverAviso",
+                        Text = "Volver",
+                        Width = 160,
+                        Height = 50,
+                        BackColor = Color.Gray,
+                        ForeColor = Color.White,
+                        Font = new Font("Segoe UI", 12, FontStyle.Bold)
+                    };
+                    btnVolver.Click += (s, ev) =>
+                    {
+                        panelAviso.Visible = false;
+                        btnAvisoCerrar.Visible = true;
+                    };
+                    panelAviso.Controls.Add(btnVolver);
+                }
+
+                // Siempre ajustar la posición antes de mostrar
+                btnVolver.Top = panelAviso.Height - btnVolver.Height - 20;
+                btnVolver.Left = (panelAviso.Width - btnVolver.Width) / 2;
+                btnVolver.Visible = true;
+
+                // Traer el botón al frente
+                panelAviso.Controls.SetChildIndex(btnVolver, panelAviso.Controls.Count - 1);
+
+                // Forzar repintado
+                btnVolver.BringToFront();
+                panelAviso.Refresh();
+
+                panelAviso.Visible = true;
             }
         }
 

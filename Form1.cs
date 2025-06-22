@@ -206,7 +206,7 @@ namespace TP4_LEANDRO
             panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
             this.Controls.Add(panelPrincipal);
 
-
+            //
             // Panel Técnico
             panelTecnico = new Panel
             {

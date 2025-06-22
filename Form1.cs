@@ -138,6 +138,12 @@ namespace TP4_LEANDRO
         private ListView listViewResueltos = null!;
         private Button btnInicioTecnicoVolver = null!;
 
+        //Seguimiento de envios
+        private Button btnLateralSeguimientos = null!;
+        private Panel panelSeguimientos = null!;
+        private DataGridView dgvSeguimientos = null!;
+        private Button btnSeguimientosVolver = null!;
+
         public Form1()
         {
             InitializeComponent();
@@ -378,6 +384,62 @@ namespace TP4_LEANDRO
                 TabStop = false
             };
             btnLateralTecnicoTickets.Click += (s, e) => MostrarPanelTecnicoTickets();
+
+
+
+            panelSeguimientos = new Panel
+            {
+                Size = new Size(800, 400),
+                BackColor = Color.White,
+                Visible = false
+            };
+
+            dgvSeguimientos = new DataGridView
+            {
+                Dock = DockStyle.Top,
+                Height = 300,
+                Width = 780,
+                Left = 10,
+                Top = 10,
+                AllowUserToAddRows = false,
+                ReadOnly = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            };
+
+            dgvSeguimientos.Columns.Add("NumeroSeguimiento", "Seguimiento");
+            dgvSeguimientos.Columns.Add("Cliente", "Cliente");
+            dgvSeguimientos.Columns.Add("Estado", "Estado");
+            dgvSeguimientos.CellValueChanged += DgvSeguimientos_CellValueChanged;
+            dgvSeguimientos.CurrentCellDirtyStateChanged += (s, e) =>
+            {
+                if (dgvSeguimientos.IsCurrentCellDirty)
+                    dgvSeguimientos.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            };
+
+            var estadoCol = new DataGridViewComboBoxColumn
+            {
+                Name = "EstadoCombo",
+                HeaderText = "Cambiar Estado",
+                DataSource = Enum.GetNames(typeof(EstadoPedido))
+            };
+            dgvSeguimientos.Columns.Add(estadoCol);
+
+            btnSeguimientosVolver = new Button
+            {
+                Text = "Volver",
+                Width = 120,
+                Height = 40,
+                Top = 320,
+                Left = 340,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnSeguimientosVolver.Click += (s, e) => panelSeguimientos.Visible = false;
+
+            panelSeguimientos.Controls.Add(dgvSeguimientos);
+            panelSeguimientos.Controls.Add(btnSeguimientosVolver);
+            this.Controls.Add(panelSeguimientos);
 
             btnLateralTecnicoEstadisticas = new Button
             {
@@ -692,7 +754,7 @@ namespace TP4_LEANDRO
 
             btnLateralTecnicoActualizar = new Button
             {
-                Text = "Actualizar",
+                Text = "Seguimientos",
                 Top = 340,
                 Left = 10,
                 Width = 200,
@@ -704,7 +766,7 @@ namespace TP4_LEANDRO
                 Cursor = Cursors.Hand,
                 TabStop = false
             };
-            btnLateralTecnicoActualizar.Click += (s, e) => CargarTicketsTecnico();
+            btnLateralTecnicoActualizar.Click += (s, e) => MostrarPanelSeguimientos();
 
             btnLateralTecnicoCerrarSesion = new Button
             {
@@ -758,7 +820,7 @@ namespace TP4_LEANDRO
             panelMenuLateral.Controls.AddRange(new Control[] {
             btnLateralInicio, btnLateralHacerEnvio, btnLateralVerEnvios,
             btnLateralPreguntas, btnLateralSucursales, btnLateralAyuda,
-            btnLateralCerrarSesion // <-- Agregado aquí
+            btnLateralCerrarSesion, btnLateralSeguimientos // <-- Agregado aquí
             });
             this.Controls.Add(panelMenuLateral);
 
@@ -1133,6 +1195,10 @@ namespace TP4_LEANDRO
                 case "Salir":
                     this.Close();
                     break;
+                case "SEGUIMIENTOS":
+                    MostrarPanelSeguimientos();
+                    break;
+
                 default:
                     break;
             }
@@ -1327,12 +1393,14 @@ namespace TP4_LEANDRO
                 return;
             }
 
-            var consulta = new ConsultaSoporte
+            // Cambia aquí: usa ConsultaSoporteExtendido
+            var consulta = new ConsultaSoporteExtendido
             {
-                NombreCliente = clienteActual?.Nombre + " " + clienteActual?.Apellido,
+                NombreCliente = $"{clienteActual?.Nombre} {clienteActual?.Apellido}",
                 Email = clienteActual?.Email ?? "",
                 Mensaje = txtSoporteMensaje.Text,
-                Fecha = DateTime.Now
+                Fecha = DateTime.Now,
+                Atendido = false // Nuevo ticket, no atendido
             };
             consultasSoporte.Add(consulta);
 
@@ -1610,7 +1678,12 @@ namespace TP4_LEANDRO
             var item = listViewTecnicoTickets.SelectedItems[0];
             if (item.Tag is ConsultaSoporte ticket)
             {
-                var cliente = pedidos.Select(p => p.Cliente).FirstOrDefault(c => $"{c.Nombre} {c.Apellido}" == ticket.NombreCliente);
+                // Buscar por email o por nombre completo
+                var cliente = pedidos.Select(p => p.Cliente)
+                    .FirstOrDefault(c =>
+                        (!string.IsNullOrEmpty(ticket.Email) && c.Email == ticket.Email) ||
+                        (!string.IsNullOrEmpty(ticket.NombreCliente) && $"{c.Nombre} {c.Apellido}" == ticket.NombreCliente)
+                    );
                 if (cliente != null)
                 {
                     string detalles = $"Nombre: {cliente.Nombre}\nApellido: {cliente.Apellido}\nDNI: {cliente.DNI}\nEmail: {cliente.Email}\nTeléfono: {cliente.Telefono}\nDirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
@@ -1816,7 +1889,42 @@ namespace TP4_LEANDRO
             clienteActual = null;
             lblUsuario.Text = "Bienvenido";
         }
-        
+        private void MostrarPanelSeguimientos()
+        {
+            dgvSeguimientos.Rows.Clear();
+            foreach (var pedido in pedidos)
+            {
+                int rowIndex = dgvSeguimientos.Rows.Add(
+                    pedido.NumeroSeguimiento,
+                    $"{pedido.Cliente.Nombre} {pedido.Cliente.Apellido}",
+                    pedido.Estado.ToString(),
+                    pedido.Estado.ToString()
+                );
+                dgvSeguimientos.Rows[rowIndex].Tag = pedido;
+            }
+            panelSeguimientos.Visible = true;
+            CentrarPanel(panelSeguimientos);
+            panelSeguimientos.BringToFront();
+        }
+
+        private void DgvSeguimientos_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            if (dgvSeguimientos.Columns[e.ColumnIndex].Name == "EstadoCombo")
+            {
+                var row = dgvSeguimientos.Rows[e.RowIndex];
+                var pedido = row.Tag as Pedido;
+                if (pedido != null)
+                {
+                    var nuevoEstadoStr = row.Cells["EstadoCombo"].Value?.ToString();
+                    if (Enum.TryParse<EstadoPedido>(nuevoEstadoStr, out var nuevoEstado))
+                    {
+                        pedido.Estado = nuevoEstado;
+                        row.Cells["Estado"].Value = nuevoEstado.ToString();
+                    }
+                }
+            }
+        }
         private void OcultarPanelesTecnico()
         {
             panelTecnico.Visible = false;

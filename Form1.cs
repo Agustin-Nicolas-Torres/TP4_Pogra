@@ -55,6 +55,7 @@ namespace TP4_LEANDRO
         private Button btnLateralPreguntas = null!;
         private Button btnLateralSucursales = null!;
         private Button btnLateralAyuda = null!;
+        private Button btnLateralCerrarSesion = null!;
 
         // Controles para login
         private TextBox txtLoginNombre = null!;
@@ -223,7 +224,24 @@ namespace TP4_LEANDRO
             panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
             this.Controls.Add(panelPrincipal);
 
-            
+
+            //BOTON PARA CERRAR SESION DEL CLIENTE
+
+            btnLateralCerrarSesion = new Button
+            {
+                Text = "Cerrar Sesión",
+                Top = 390, // Ajusta la posición según tus otros botones
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnLateralCerrarSesion.Click += (s, e) => CerrarSesionCliente();
             // Panel Técnico
             panelTecnico = new Panel
             {
@@ -738,8 +756,9 @@ namespace TP4_LEANDRO
             btnLateralAyuda = CrearBotonLateral("AYUDA", 330, BotonMenu_Click);
 
             panelMenuLateral.Controls.AddRange(new Control[] {
-                btnLateralInicio, btnLateralHacerEnvio, btnLateralVerEnvios,
-                btnLateralPreguntas, btnLateralSucursales, btnLateralAyuda
+            btnLateralInicio, btnLateralHacerEnvio, btnLateralVerEnvios,
+            btnLateralPreguntas, btnLateralSucursales, btnLateralAyuda,
+            btnLateralCerrarSesion // <-- Agregado aquí
             });
             this.Controls.Add(panelMenuLateral);
 
@@ -1484,6 +1503,7 @@ namespace TP4_LEANDRO
                 lblComentario.Text = comentario;
                 ActualizarListaPedidos();
             }
+
         }
 
         private void BtnVerDetalles_Click(object? sender, EventArgs e)
@@ -1636,7 +1656,7 @@ namespace TP4_LEANDRO
         private void CerrarSesionTecnico()
         {
             panelMenuLateralTecnico.Visible = false;
-            panelTecnico.Visible = false;
+            OcultarPanelesTecnico(); // <-- Oculta todos los paneles técnicos
             panelPrincipal.Visible = true;
         }
 
@@ -1727,7 +1747,23 @@ namespace TP4_LEANDRO
             CentrarPanel(panelInicioTecnico);
             panelInicioTecnico.BringToFront();
         }
-
+        private void CerrarSesionCliente()
+        {
+            panelMenuLateral.Visible = false;
+            panelMenu.Visible = false;
+            panelPedido.Visible = false;
+            panelEstado.Visible = false;
+            panelListaPedidos.Visible = false;
+            panelSoporte.Visible = false;
+            panelAviso.Visible = false;
+            panelTickets.Visible = false;
+            panelEditarPedido.Visible = false;
+            panelLogin.Visible = false; // <-- Esto oculta el login del cliente
+            panelPrincipal.Visible = true;
+            clienteActual = null;
+            lblUsuario.Text = "Bienvenido";
+        }
+        
         private void OcultarPanelesTecnico()
         {
             panelTecnico.Visible = false;

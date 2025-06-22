@@ -389,7 +389,7 @@ namespace TP4_LEANDRO
 
             panelSeguimientos = new Panel
             {
-                Size = new Size(800, 400),
+                Size = new Size(670, 420),
                 BackColor = Color.White,
                 Visible = false
             };
@@ -435,7 +435,12 @@ namespace TP4_LEANDRO
                 BackColor = Color.Gray,
                 ForeColor = Color.White
             };
-            btnSeguimientosVolver.Click += (s, e) => panelSeguimientos.Visible = false;
+            btnSeguimientosVolver.Click += (s, e) =>
+            {
+                panelSeguimientos.Visible = false;
+                CentrarPanel(panelTecnico);
+                panelTecnico.BringToFront();
+            };
 
             panelSeguimientos.Controls.Add(dgvSeguimientos);
             panelSeguimientos.Controls.Add(btnSeguimientosVolver);
@@ -1902,6 +1907,7 @@ namespace TP4_LEANDRO
                 );
                 dgvSeguimientos.Rows[rowIndex].Tag = pedido;
             }
+            OcultarPanelesTecnico(); // Oculta todos los paneles técnicos
             panelSeguimientos.Visible = true;
             CentrarPanel(panelSeguimientos);
             panelSeguimientos.BringToFront();

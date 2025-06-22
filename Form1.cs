@@ -896,7 +896,7 @@ namespace TP4_LEANDRO
             {
                 Text = texto,
                 Top = top,
-                Left = 10,
+                Left = 10, 
                 Width = 200,
                 Height = 45,
                 BackColor = Color.FromArgb(220, 36, 31),

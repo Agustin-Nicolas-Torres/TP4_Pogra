@@ -32,7 +32,7 @@ namespace TP4_LEANDRO.Controladores
                 Cliente.Add(a);
 
             }
-            return Cliente;
+            return Cliente; 
         }
 
         public static bool Validar(string usuarioSeleccionado, string contraseñaIngresada)

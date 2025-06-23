@@ -121,16 +121,12 @@ namespace TP4_LEANDRO
         private Button btnLateralTecnicoTickets = null!;
         private Button btnLateralTecnicoCerrarSesion = null!;
 
-        private Button btnLateralTecnicoEstadisticas = null!;
         private Button btnLateralTecnicoHistorial = null!;
-        private Button btnLateralTecnicoConfiguracion = null!;
         private Button btnLateralTecnicoAcerca = null!;
         private Button btnLateralTecnicoActualizar = null!;
 
         // Paneles para funcionalidades del técnico
-        private Panel panelEstadisticas = null!;
         private Panel panelHistorial = null!;
-        private Panel panelConfiguracion = null!;
         private Panel panelAcerca = null!;
         private Panel panelInicioTecnico = null!;
         private Label lblInicioTecnicoResumen = null!;
@@ -455,61 +451,6 @@ namespace TP4_LEANDRO
             panelSeguimientos.Controls.Add(dgvSeguimientos);
             panelSeguimientos.Controls.Add(btnSeguimientosVolver);
             this.Controls.Add(panelSeguimientos);
-
-            btnLateralTecnicoEstadisticas = new Button
-            {
-                Text = "Estadísticas",
-                Top = 100,
-                Left = 10,
-                Width = 200,
-                Height = 45,
-                BackColor = Color.FromArgb(220, 36, 31),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                Cursor = Cursors.Hand,
-                TabStop = false
-            };
-            // Panel Estadísticas
-            panelEstadisticas = new Panel
-            {
-                Size = new Size(600, 400),
-                BackColor = Color.White,
-                Visible = false,
-                BorderStyle = BorderStyle.FixedSingle
-            };
-            var lblEstadisticas = new Label
-            {
-                Text = "Estadísticas de Tickets y Pedidos",
-                Font = new Font("Segoe UI", 15, FontStyle.Bold),
-                ForeColor = Color.FromArgb(33, 150, 243),
-                Top = 30,
-                Left = 30,
-                Width = 540
-            };
-            var lblEstadisticasInfo = new Label
-            {
-                Text = $"Total de tickets: {consultasSoporte.Count}\nTickets atendidos: {consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido)}\nPedidos totales: {pedidos.Count}",
-                Font = new Font("Segoe UI", 12),
-                Top = 80,
-                Left = 30,
-                Width = 540,
-                Height = 100
-            };
-            var btnEstadisticasVolver = new Button
-            {
-                Text = "Volver",
-                Top = 340,
-                Left = 240,
-                Width = 120,
-                Height = 40,
-                BackColor = Color.Gray,
-                ForeColor = Color.White
-            };
-            btnEstadisticasVolver.Click += (s, e) => panelEstadisticas.Visible = false;
-            panelEstadisticas.Controls.AddRange(new Control[] { lblEstadisticas, lblEstadisticasInfo, btnEstadisticasVolver });
-            this.Controls.Add(panelEstadisticas);
-
             // Panel Historial
             panelHistorial = new Panel
             {
@@ -654,38 +595,6 @@ namespace TP4_LEANDRO
             btnHistorialVolver.Click += (s, e) => panelHistorial.Visible = false;
             panelHistorial.Controls.AddRange(new Control[] { lblHistorial, listViewHistorial, btnHistorialVolver });
             this.Controls.Add(panelHistorial);
-
-            // Panel Configuración
-            panelConfiguracion = new Panel
-            {
-                Size = new Size(400, 300),
-                BackColor = Color.White,
-                Visible = false,
-                BorderStyle = BorderStyle.FixedSingle
-            };
-            var lblConfiguracion = new Label
-            {
-                Text = "Configuración del Sistema (próximamente)",
-                Font = new Font("Segoe UI", 14, FontStyle.Bold),
-                ForeColor = Color.FromArgb(255, 193, 7),
-                Top = 30,
-                Left = 30,
-                Width = 340
-            };
-            var btnConfiguracionVolver = new Button
-            {
-                Text = "Volver",
-                Top = 200,
-                Left = 140,
-                Width = 120,
-                Height = 40,
-                BackColor = Color.Gray,
-                ForeColor = Color.White
-            };
-            btnConfiguracionVolver.Click += (s, e) => panelConfiguracion.Visible = false;
-            panelConfiguracion.Controls.AddRange(new Control[] { lblConfiguracion, btnConfiguracionVolver });
-            this.Controls.Add(panelConfiguracion);
-
             // Panel Acerca de
             panelAcerca = new Panel
             {
@@ -717,12 +626,11 @@ namespace TP4_LEANDRO
             btnAcercaVolver.Click += (s, e) => panelAcerca.Visible = false;
             panelAcerca.Controls.AddRange(new Control[] { lblAcerca, btnAcercaVolver });
             this.Controls.Add(panelAcerca);
-            btnLateralTecnicoEstadisticas.Click += (s, e) => MostrarAviso("Estadísticas", "Aquí se mostrarán estadísticas de tickets y paquetería.");
 
             btnLateralTecnicoHistorial = new Button
             {
                 Text = "Historial de Tickets",
-                Top = 160,
+                Top = 105,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -734,27 +642,10 @@ namespace TP4_LEANDRO
                 TabStop = false
             };
             btnLateralTecnicoHistorial.Click += (s, e) => MostrarPanelHistorial();
-
-            btnLateralTecnicoConfiguracion = new Button
-            {
-                Text = "Configuración",
-                Top = 220,
-                Left = 10,
-                Width = 200,
-                Height = 45,
-                BackColor = Color.FromArgb(220, 36, 31),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold),
-                Cursor = Cursors.Hand,
-                TabStop = false
-            };
-            btnLateralTecnicoConfiguracion.Click += (s, e) => MostrarAviso("Configuración", "Aquí podrá modificar la configuración del sistema.");
-
             btnLateralTecnicoAcerca = new Button
             {
                 Text = "Acerca de",
-                Top = 280,
+                Top = 155,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -770,7 +661,7 @@ namespace TP4_LEANDRO
             btnLateralTecnicoActualizar = new Button
             {
                 Text = "Seguimientos",
-                Top = 340,
+                Top = 205,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -786,7 +677,7 @@ namespace TP4_LEANDRO
             btnLateralTecnicoCerrarSesion = new Button
             {
                 Text = "Cerrar Sesión",
-                Top = 400,
+                Top = 255,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -801,9 +692,7 @@ namespace TP4_LEANDRO
 
             panelMenuLateralTecnico.Controls.AddRange(new Control[] {
                 btnLateralTecnicoTickets,
-                btnLateralTecnicoEstadisticas,
                 btnLateralTecnicoHistorial,
-                btnLateralTecnicoConfiguracion,
                 btnLateralTecnicoAcerca,
                 btnLateralTecnicoActualizar,
                 btnLateralTecnicoCerrarSesion
@@ -1276,6 +1165,7 @@ namespace TP4_LEANDRO
 
         private void MostrarPanelPedido()
         {
+            
             txtCalle.Text = "";
             txtNumeroCalle.Text = "";
             txtProvincia.Text = "";
@@ -1805,17 +1695,6 @@ namespace TP4_LEANDRO
             OcultarTodosLosPaneles();
             panelPrincipal.Visible = true;
         }
-
-        private void MostrarPanelEstadisticas()
-        {
-            OcultarPanelesTecnico();
-            var lbl = (Label)panelEstadisticas.Controls[1];
-            lbl.Text = $"Total de tickets: {consultasSoporte.Count}\nTickets atendidos: {consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido)}\nPedidos totales: {pedidos.Count}";
-            panelEstadisticas.Visible = true;
-            CentrarPanel(panelEstadisticas);
-            panelEstadisticas.BringToFront();
-        }
-
         private void MostrarPanelHistorial()
         {
             OcultarPanelesTecnico();
@@ -1838,16 +1717,6 @@ namespace TP4_LEANDRO
             panelHistorial.BringToFront();
             CentrarPanel(panelHistorial);
         }
-
-
-        private void MostrarPanelConfiguracion()
-        {
-            OcultarPanelesTecnico();
-            panelConfiguracion.Visible = true;
-            CentrarPanel(panelConfiguracion);
-            panelConfiguracion.BringToFront();
-        }
-
         private void MostrarPanelAcerca()
         {
             OcultarPanelesTecnico();
@@ -1916,7 +1785,7 @@ namespace TP4_LEANDRO
             {
                 int rowIndex = dgvSeguimientos.Rows.Add(
                     pedido.NumeroSeguimiento,
-                    $"{pedido.Cliente.Nombre} {pedido.Cliente.Apellido}",
+                    $"{pedido.Cliente.Nombre} {pedido.Cliente.Usuario}",
                     pedido.Estado.ToString(),
                     pedido.Estado.ToString()
                 );
@@ -1950,9 +1819,7 @@ namespace TP4_LEANDRO
         {
             panelTecnico.Visible = false;
             panelInicioTecnico.Visible = false;
-            panelEstadisticas.Visible = false;
             panelHistorial.Visible = false;
-            panelConfiguracion.Visible = false;
             panelAcerca.Visible = false;
         }
 
@@ -2564,9 +2431,7 @@ namespace TP4_LEANDRO
             panelMenuLateralTecnico.Visible = false;
             panelTecnico.Visible = false;
             panelLoginTecnico.Visible = false;
-            panelEstadisticas.Visible = false;
             panelHistorial.Visible = false;
-            panelConfiguracion.Visible = false;
             panelAcerca.Visible = false;
             panelInicioTecnico.Visible = false;
             panelSeguimientos.Visible = false;

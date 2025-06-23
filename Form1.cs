@@ -144,9 +144,20 @@ namespace TP4_LEANDRO
         private DataGridView dgvSeguimientos = null!;
         private Button btnSeguimientosVolver = null!;
 
+
+        //PANEL PARA EL ADMINISTRDOR
+        private Panel panelAdminLogin = null!;
+        private Panel panelAdministrador = null!;
+        private TextBox txtAdminUsuario = null!;
+        private TextBox txtAdminContraseña = null!;
+
+
+
         public Form1()
         {
             InitializeComponent();
+            InicializarPanelesAdministrador(); // <-- Agrega esta línea aquí
+            InicializarPanelesAdminExtras();
             this.WindowState = FormWindowState.Maximized;
             InicializarPaneles();
             this.Resize += (s, e) => CentrarTodosLosPaneles();
@@ -229,7 +240,6 @@ namespace TP4_LEANDRO
 
             panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
             this.Controls.Add(panelPrincipal);
-
 
             //BOTON PARA CERRAR SESION DEL CLIENTE
 
@@ -1150,13 +1160,6 @@ namespace TP4_LEANDRO
             CentrarPanel(panelLoginTecnico);
             panelLoginTecnico.BringToFront();
         }
-
-        private void MostrarPanelAdministrador()
-        {
-            panelPrincipal.Visible = false;
-            // Aquí puedes mostrar el panel de administrador si lo tienes implementado
-            MostrarAviso("Panel Administrador", "Aquí irá la interfaz para el administrador.");
-        }
         private void BotonMenu_Click(object? sender, EventArgs e)
         {
             if (sender is not Button btn) return;
@@ -1787,7 +1790,7 @@ namespace TP4_LEANDRO
         private void CerrarSesionTecnico()
         {
             panelMenuLateralTecnico.Visible = false;
-            OcultarPanelesTecnico(); // <-- Oculta todos los paneles técnicos
+            OcultarTodosLosPaneles();
             panelPrincipal.Visible = true;
         }
 
@@ -1940,5 +1943,626 @@ namespace TP4_LEANDRO
             panelConfiguracion.Visible = false;
             panelAcerca.Visible = false;
         }
+
+        private void MostrarPanelAdministrador()
+        {
+            // Oculta todos los paneles principales y laterales
+            panelPrincipal.Visible = false;
+            panelMenuLateral.Visible = false;
+            panelMenuLateralTecnico.Visible = false;
+            panelMenuLateralAdmin.Visible = false;
+            panelAdministrador.Visible = false;
+
+            // Muestra solo el login de admin
+            panelAdminLogin.Visible = true;
+            CentrarPanel(panelAdminLogin);
+            panelAdminLogin.BringToFront();
+        }
+
+        // Este método ya lo tienes, pero para mostrar el panel principal del administrador después del login exitoso:
+        private void MostrarPanelAdminPrincipal()
+        {
+            OcultarPanelesAdmin();
+            panelAdminLogin.Visible = false;
+            panelAdministrador.Visible = true;
+            panelMenuLateralAdmin.Visible = true;
+            CentrarPanel(panelAdministrador);
+            panelAdministrador.BringToFront();
+            CargarDatosAdmin();
+        }
+
+        // Y en el botón de login de admin, asegúrate de llamar a MostrarPanelAdminPrincipal() si el login es correcto:
+        private void BtnAdminEntrar_Click(object? sender, EventArgs e)
+        {
+            if (txtAdminUsuario.Text == "Bender" && txtAdminContraseña.Text == "1234")
+            {
+                MostrarPanelAdminPrincipal();
+            }
+            else
+            {
+                MostrarAviso("Error", "Usuario o contraseña incorrectos.");
+            }
+        }
+        private ListView listViewAdmin = null!;
+        private Button btnVerClientes = null!;
+        private Button btnVerTecnicos = null!;
+        private Button btnAgregar = null!;
+        private Button btnEditar = null!;
+        private Button btnEliminar = null!;
+        private Label lblAdminTitulo = null!;
+        private bool mostrandoClientes = true;
+        private Panel panelMenuLateralAdmin = null!;
+        private Button btnAdminClientes = null!;
+        private Button btnAdminTecnicos = null!;
+        private Button btnAdminCerrarSesion = null!;
+
+        private Panel panelAdminPedidos = null!;
+        private Panel panelAdminAuditoria = null!;
+        private Panel panelAdminDashboard = null!;
+        private ListView listViewAdminPedidos = null!;
+        private ListView listViewAdminAuditoria = null!;
+        private Label lblDashboardPedidos = null!;
+        private Label lblDashboardFinalizados = null!;
+        private Label lblDashboardTicketsPendientes = null!;
+        private Label lblDashboardTicketsAtendidos = null!;
+        private Label lblDashboardTecnicos = null!;
+        private ComboBox comboAsignarTecnico = null!;
+        private Button btnAsignarTecnico = null!;
+        private Button btnCambiarEstado = null!;
+
+        // Para logs de auditoría
+        private List<string> logsAuditoria = new();
+
+        private List<Cliente> tecnicos = new();
+        private void InicializarPanelesAdministrador()
+        {
+
+            // Panel de login de administrador (igual que antes)
+            panelAdminLogin = new Panel
+            {
+                Size = new Size(400, 300),
+                BackColor = Color.White,
+                Visible = false
+            };
+            txtAdminUsuario = new TextBox
+            {
+                PlaceholderText = "Usuario Administrador",
+                Width = 250,
+                Left = 75,
+                Top = 60
+            };
+            txtAdminContraseña = new TextBox
+            {
+                PlaceholderText = "Contraseña",
+                Width = 250,
+                Left = 75,
+                Top = 120,
+                UseSystemPasswordChar = true
+            };
+
+            var btnAdminEntrar = new Button
+            {
+                Text = "Entrar",
+                Width = 250,
+                Height = 40,
+                Left = 75,
+                Top = 180,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White
+            };
+            btnAdminEntrar.Click += BtnAdminEntrar_Click;
+            panelAdminLogin.Controls.AddRange(new Control[] { txtAdminUsuario, txtAdminContraseña, btnAdminEntrar });
+            this.Controls.Add(panelAdminLogin);
+
+            // Panel lateral administrador
+            panelMenuLateralAdmin = new Panel
+            {
+                Size = new Size(220, 500),
+                BackColor = Color.FromArgb(245, 245, 245),
+                Left = 0,
+                Top = 0,
+                Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom,
+                Visible = false
+            };
+
+            btnAdminClientes = new Button
+            {
+                Text = "Clientes",
+                Top = 50,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnAdminClientes.Click += (s, e) =>
+            {
+                mostrandoClientes = true;
+                lblAdminTitulo.Text = "Administración de Clientes";
+                CargarDatosAdmin();
+            };
+
+            btnAdminTecnicos = new Button
+            {
+                Text = "Técnicos",
+                Top = 110,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnAdminTecnicos.Click += (s, e) =>
+            {
+                mostrandoClientes = false;
+                lblAdminTitulo.Text = "Administración de Técnicos";
+                CargarDatosAdmin();
+            };
+
+            btnAdminCerrarSesion = new Button
+            {
+                Text = "Cerrar Sesión",
+                Top = 400,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnAdminCerrarSesion.Click += (s, e) =>
+            {
+                OcultarPanelesAdmin();
+                panelMenuLateralAdmin.Visible = false;
+                panelPrincipal.Visible = true;
+            };
+
+            panelMenuLateralAdmin.Controls.AddRange(new Control[] { btnAdminClientes, btnAdminTecnicos, btnAdminCerrarSesion });
+            this.Controls.Add(panelMenuLateralAdmin);
+
+            // Panel principal del administrador
+            panelAdministrador = new Panel
+            {
+                Size = new Size(700, 500),
+                BackColor = Color.White,
+                Visible = false,
+                Left = panelMenuLateralAdmin.Width,
+                Top = 0
+            };
+
+            lblAdminTitulo = new Label
+            {
+                Text = "Administración de Clientes",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 36, 31),
+                Top = 20,
+                Left = 30,
+                Width = 500
+            };
+
+            listViewAdmin = new ListView
+            {
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 80,
+                Left = 30,
+                Width = 620,
+                Height = 350
+            };
+            listViewAdmin.Columns.Add("ID", 50);
+            listViewAdmin.Columns.Add("Usuario", 120);
+            listViewAdmin.Columns.Add("Nombre", 120);
+            listViewAdmin.Columns.Add("Apellido", 120);
+            listViewAdmin.Columns.Add("Email", 180);
+
+            panelAdministrador.Controls.AddRange(new Control[]
+            {
+        lblAdminTitulo, listViewAdmin
+            });
+            this.Controls.Add(panelAdministrador);
+
+            // Botón Pedidos
+            var btnAdminPedidos = new Button
+            {
+                Text = "Pedidos",
+                Top = 170,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnAdminPedidos.Click += (s, e) => MostrarPanelAdminPedidos();
+            panelMenuLateralAdmin.Controls.Add(btnAdminPedidos);
+
+            // Botón Auditoría
+            var btnAdminAuditoria = new Button
+            {
+                Text = "Auditoría",
+                Top = 230,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnAdminAuditoria.Click += (s, e) => MostrarPanelAdminAuditoria();
+            panelMenuLateralAdmin.Controls.Add(btnAdminAuditoria);
+
+            // Botón Dashboard
+            var btnAdminDashboard = new Button
+            {
+                Text = "Dashboard",
+                Top = 290,
+                Left = 10,
+                Width = 200,
+                Height = 45,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = false
+            };
+            btnAdminDashboard.Click += (s, e) => MostrarPanelAdminDashboard();
+            panelMenuLateralAdmin.Controls.Add(btnAdminDashboard);
+        }
+
+        private void CargarDatosAdmin()
+        {
+            listViewAdmin.Items.Clear();
+            if (mostrandoClientes)
+            {
+                foreach (var c in pedidos.Select(p => p.Cliente).Where(c => !c.Es_Admin).DistinctBy(c => c.ID))
+                {
+                    var item = new ListViewItem(new[]
+                    {
+                c.ID.ToString(),
+                c.Usuario,
+                c.Nombre,
+                c.Apellido,
+                c.Email
+            });
+                    item.Tag = c;
+                    listViewAdmin.Items.Add(item);
+                }
+            }
+            else
+            {
+                foreach (var t in tecnicos)
+                {
+                    var item = new ListViewItem(new[]
+                    {
+                t.ID.ToString(),
+                t.Usuario,
+                t.Nombre,
+                t.Apellido,
+                t.Email
+            });
+                    item.Tag = t;
+                    listViewAdmin.Items.Add(item);
+                }
+            }
+        }
+        private void BtnAgregar_Click(object? sender, EventArgs e)
+        {
+            var form = new Form
+            {
+                Text = mostrandoClientes ? "Agregar Cliente" : "Agregar Técnico",
+                Size = new Size(350, 400),
+                StartPosition = FormStartPosition.CenterParent
+            };
+            var txtUsuario = new TextBox { PlaceholderText = "Usuario", Top = 20, Left = 30, Width = 250 };
+            var txtNombre = new TextBox { PlaceholderText = "Nombre", Top = 60, Left = 30, Width = 250 };
+            var txtApellido = new TextBox { PlaceholderText = "Apellido", Top = 100, Left = 30, Width = 250 };
+            var txtEmail = new TextBox { PlaceholderText = "Email", Top = 140, Left = 30, Width = 250 };
+            var txtContraseña = new TextBox { PlaceholderText = "Contraseña", Top = 180, Left = 30, Width = 250, UseSystemPasswordChar = true };
+            var btnAceptar = new Button { Text = "Aceptar", Top = 240, Left = 30, Width = 100, Height = 35, BackColor = Color.FromArgb(33, 150, 243), ForeColor = Color.White };
+            var btnCancelar = new Button { Text = "Cancelar", Top = 240, Left = 180, Width = 100, Height = 35, BackColor = Color.Gray, ForeColor = Color.White };
+            btnCancelar.Click += (s, ev) => form.Close();
+            btnAceptar.Click += (s, ev) =>
+            {
+                var nuevo = new Cliente
+                {
+                    ID = new Random().Next(1000, 9999),
+                    Usuario = txtUsuario.Text,
+                    Nombre = txtNombre.Text,
+                    Apellido = txtApellido.Text,
+                    Email = txtEmail.Text,
+                    Contraseña = txtContraseña.Text,
+                    Es_Admin = false
+                };
+                if (mostrandoClientes)
+                {
+                    // Aquí deberías agregar a la base de datos o lista real de clientes
+                    // Ejemplo: clientes.Add(nuevo);
+                }
+                else
+                {
+                    tecnicos.Add(nuevo);
+                }
+                form.Close();
+                CargarDatosAdmin();
+            };
+            form.Controls.AddRange(new Control[] { txtUsuario, txtNombre, txtApellido, txtEmail, txtContraseña, btnAceptar, btnCancelar });
+            form.ShowDialog();
+        }
+
+        private void BtnEditar_Click(object? sender, EventArgs e)
+        {
+            if (listViewAdmin.SelectedItems.Count == 0) return;
+            var seleccionado = listViewAdmin.SelectedItems[0].Tag as Cliente;
+            if (seleccionado == null) return;
+
+            var form = new Form
+            {
+                Text = mostrandoClientes ? "Editar Cliente" : "Editar Técnico",
+                Size = new Size(350, 400),
+                StartPosition = FormStartPosition.CenterParent
+            };
+            var txtUsuario = new TextBox { Text = seleccionado.Usuario, Top = 20, Left = 30, Width = 250 };
+            var txtNombre = new TextBox { Text = seleccionado.Nombre, Top = 60, Left = 30, Width = 250 };
+            var txtApellido = new TextBox { Text = seleccionado.Apellido, Top = 100, Left = 30, Width = 250 };
+            var txtEmail = new TextBox { Text = seleccionado.Email, Top = 140, Left = 30, Width = 250 };
+            var txtContraseña = new TextBox { Text = seleccionado.Contraseña, Top = 180, Left = 30, Width = 250, UseSystemPasswordChar = true };
+            var btnAceptar = new Button { Text = "Aceptar", Top = 240, Left = 30, Width = 100, Height = 35, BackColor = Color.FromArgb(33, 150, 243), ForeColor = Color.White };
+            var btnCancelar = new Button { Text = "Cancelar", Top = 240, Left = 180, Width = 100, Height = 35, BackColor = Color.Gray, ForeColor = Color.White };
+            btnCancelar.Click += (s, ev) => form.Close();
+            btnAceptar.Click += (s, ev) =>
+            {
+                seleccionado.Usuario = txtUsuario.Text;
+                seleccionado.Nombre = txtNombre.Text;
+                seleccionado.Apellido = txtApellido.Text;
+                seleccionado.Email = txtEmail.Text;
+                seleccionado.Contraseña = txtContraseña.Text;
+                form.Close();
+                CargarDatosAdmin();
+            };
+            form.Controls.AddRange(new Control[] { txtUsuario, txtNombre, txtApellido, txtEmail, txtContraseña, btnAceptar, btnCancelar });
+            form.ShowDialog();
+        }
+
+        private void BtnEliminar_Click(object? sender, EventArgs e)
+        {
+            if (listViewAdmin.SelectedItems.Count == 0) return;
+            var seleccionado = listViewAdmin.SelectedItems[0].Tag as Cliente;
+            if (seleccionado == null) return;
+            var confirm = MessageBox.Show("¿Está seguro que desea eliminar este registro?", "Eliminar", MessageBoxButtons.YesNo);
+            if (confirm == DialogResult.Yes)
+            {
+                if (mostrandoClientes)
+                {
+                    // Eliminar de la lista real de clientes
+                    // clientes.Remove(seleccionado);
+                }
+                else
+                {
+                    tecnicos.Remove(seleccionado);
+                }
+                CargarDatosAdmin();
+            }
+        }
+        private void InicializarPanelesAdminExtras()
+        {
+            // Panel Pedidos
+            panelAdminPedidos = new Panel
+            {
+                Size = new Size(700, 500),
+                BackColor = Color.White,
+                Visible = false,
+                Left = panelMenuLateralAdmin.Width,
+                Top = 0
+            };
+            listViewAdminPedidos = new ListView
+            {
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 20,
+                Left = 20,
+                Width = 640,
+                Height = 350
+            };
+            listViewAdminPedidos.Columns.Add("Seguimiento", 120);
+            listViewAdminPedidos.Columns.Add("Fecha", 120);
+            listViewAdminPedidos.Columns.Add("Estado", 100);
+            listViewAdminPedidos.Columns.Add("Cliente", 150);
+            listViewAdminPedidos.Columns.Add("Técnico", 120);
+
+            comboAsignarTecnico = new ComboBox { Left = 20, Top = 380, Width = 200 };
+            btnAsignarTecnico = new Button { Text = "Asignar Técnico", Left = 240, Top = 380, Width = 140 };
+            btnCambiarEstado = new Button { Text = "Cambiar Estado", Left = 400, Top = 380, Width = 140 };
+
+            // Eventos para asignar técnico y cambiar estado
+            btnAsignarTecnico.Click += BtnAsignarTecnico_Click;
+            btnCambiarEstado.Click += BtnCambiarEstado_Click;
+
+            panelAdminPedidos.Controls.AddRange(new Control[] { listViewAdminPedidos, comboAsignarTecnico, btnAsignarTecnico, btnCambiarEstado });
+            this.Controls.Add(panelAdminPedidos);
+
+            // Panel Auditoría
+            panelAdminAuditoria = new Panel
+            {
+                Size = new Size(700, 500),
+                BackColor = Color.White,
+                Visible = false,
+                Left = panelMenuLateralAdmin.Width,
+                Top = 0
+            };
+            listViewAdminAuditoria = new ListView
+            {
+                View = View.Details,
+                FullRowSelect = true,
+                Top = 20,
+                Left = 20,
+                Width = 640,
+                Height = 400
+            };
+            listViewAdminAuditoria.Columns.Add("Fecha", 150);
+            listViewAdminAuditoria.Columns.Add("Usuario", 150);
+            listViewAdminAuditoria.Columns.Add("Acción", 320);
+            panelAdminAuditoria.Controls.Add(listViewAdminAuditoria);
+            this.Controls.Add(panelAdminAuditoria);
+
+            // Panel Dashboard
+            panelAdminDashboard = new Panel
+            {
+                Size = new Size(700, 500),
+                BackColor = Color.White,
+                Visible = false,
+                Left = panelMenuLateralAdmin.Width,
+                Top = 0
+            };
+            lblDashboardPedidos = new Label { Left = 50, Top = 50, Width = 600, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(220, 36, 31) };
+            lblDashboardFinalizados = new Label { Left = 50, Top = 100, Width = 600, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(220, 36, 31) };
+            lblDashboardTicketsPendientes = new Label { Left = 50, Top = 150, Width = 600, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(220, 36, 31) };
+            lblDashboardTicketsAtendidos = new Label { Left = 50, Top = 200, Width = 600, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(220, 36, 31) };
+            lblDashboardTecnicos = new Label { Left = 50, Top = 250, Width = 600, Font = new Font("Segoe UI", 14, FontStyle.Bold), ForeColor = Color.FromArgb(220, 36, 31) };
+            panelAdminDashboard.Controls.AddRange(new Control[] { lblDashboardPedidos, lblDashboardFinalizados, lblDashboardTicketsPendientes, lblDashboardTicketsAtendidos, lblDashboardTecnicos });
+            this.Controls.Add(panelAdminDashboard);
+        }
+        private void MostrarPanelAdminPedidos()
+        {
+            OcultarPanelesAdmin();
+            panelAdminPedidos.Visible = true;
+            CentrarPanel(panelAdminPedidos);
+            panelAdminPedidos.BringToFront();
+            panelAdministrador.Visible = false;
+            panelAdminAuditoria.Visible = false;
+            panelAdminDashboard.Visible = false;
+
+            // Cargar pedidos
+            listViewAdminPedidos.Items.Clear();
+            foreach (var pedido in pedidos)
+            {
+                var item = new ListViewItem(new[]
+                {
+            pedido.NumeroSeguimiento,
+            pedido.Fecha.ToString("dd/MM/yyyy HH:mm"),
+            pedido.Estado.ToString(),
+            $"{pedido.Cliente.Nombre} {pedido.Cliente.Apellido}",
+            ""
+        });
+                item.Tag = pedido;
+                listViewAdminPedidos.Items.Add(item);
+            }
+            comboAsignarTecnico.Items.Clear();
+            foreach (var t in tecnicos)
+                comboAsignarTecnico.Items.Add($"{t.Nombre} {t.Apellido}");
+        }
+
+        private void MostrarPanelAdminAuditoria()
+        {
+            OcultarPanelesAdmin();
+            CentrarPanel(panelAdminAuditoria);
+            panelAdminAuditoria.Visible = true;
+            panelAdminAuditoria.BringToFront();
+            panelAdministrador.Visible = false;
+            panelAdminPedidos.Visible = false;
+            panelAdminDashboard.Visible = false;
+
+            // Cargar logs
+            listViewAdminAuditoria.Items.Clear();
+            foreach (var log in logsAuditoria)
+            {
+                var partes = log.Split('|');
+                if (partes.Length == 3)
+                    listViewAdminAuditoria.Items.Add(new ListViewItem(partes));
+            }
+        }
+
+        private void MostrarPanelAdminDashboard()
+        {
+            OcultarPanelesAdmin();
+            CentrarPanel(panelAdminDashboard);
+            panelAdministrador.Visible = false;
+            panelAdminPedidos.Visible = false;
+            panelAdminAuditoria.Visible = false;
+            panelAdminDashboard.Visible = true;
+            panelAdminDashboard.BringToFront();
+
+            lblDashboardPedidos.Text = $"Pedidos totales: {pedidos.Count}";
+            lblDashboardFinalizados.Text = $"Pedidos finalizados: {pedidos.Count(p => p.Estado == EstadoPedido.Finalizado)}";
+            lblDashboardTicketsPendientes.Text = $"Tickets pendientes: {consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => !t.Atendido)}";
+            lblDashboardTicketsAtendidos.Text = $"Tickets atendidos: {consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido)}";
+            lblDashboardTecnicos.Text = $"Técnicos: {tecnicos.Count}";
+        }
+
+        private void BtnAsignarTecnico_Click(object? sender, EventArgs e)
+        {
+            // Aquí va la lógica para asignar técnico a un pedido
+            // Por ejemplo, puedes mostrar un mensaje temporal:
+            MessageBox.Show("Funcionalidad de asignar técnico aún no implementada.");
+        }
+
+        private void BtnCambiarEstado_Click(object? sender, EventArgs e)
+        {
+            // Aquí va la lógica para cambiar el estado de un pedido
+            // Por ejemplo, puedes mostrar un mensaje temporal:
+            MessageBox.Show("Funcionalidad de cambiar estado aún no implementada.");
+        }
+
+        // Agrega este método en tu clase Form1:
+        private void OcultarPanelesAdmin()
+        {
+            panelAdministrador.Visible = false;
+            panelAdminPedidos.Visible = false;
+            panelAdminAuditoria.Visible = false;
+            panelAdminDashboard.Visible = false;
+        }
+
+        // Agrega este método en tu clase Form1:
+        private void OcultarTodosLosPaneles()
+        {
+            // Paneles cliente
+            panelMenuLateral.Visible = false;
+            panelLogin.Visible = false;
+            panelMenu.Visible = false;
+            panelPedido.Visible = false;
+            panelEstado.Visible = false;
+            panelListaPedidos.Visible = false;
+            panelSoporte.Visible = false;
+            panelAviso.Visible = false;
+            panelTickets.Visible = false;
+            panelEditarPedido.Visible = false;
+
+            // Paneles técnico
+            panelMenuLateralTecnico.Visible = false;
+            panelTecnico.Visible = false;
+            panelLoginTecnico.Visible = false;
+            panelEstadisticas.Visible = false;
+            panelHistorial.Visible = false;
+            panelConfiguracion.Visible = false;
+            panelAcerca.Visible = false;
+            panelInicioTecnico.Visible = false;
+            panelSeguimientos.Visible = false;
+
+            // Paneles admin
+            panelMenuLateralAdmin.Visible = false;
+            panelAdminLogin.Visible = false;
+            panelAdministrador.Visible = false;
+            panelAdminPedidos.Visible = false;
+            panelAdminAuditoria.Visible = false;
+            panelAdminDashboard.Visible = false;
+        }
+
     }
 }

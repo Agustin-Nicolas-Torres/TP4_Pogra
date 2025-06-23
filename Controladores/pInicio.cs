@@ -26,15 +26,17 @@ namespace TP4_LEANDRO.Controladores
                 a.Apellido = Client_Conec.GetString(2);
                 a.Usuario = Client_Conec.GetString(3);
                 a.Contraseña = Client_Conec.GetString(4);
-                a.Es_Admin = Client_Conec.GetInt32(5) == 0;
+                string esAdminStr = Client_Conec.GetString(5);
+                a.Es_Admin = esAdminStr == "1";
                 a.Email = Client_Conec.GetString(6);
 
                 Cliente.Add(a);
 
             }
-            return Cliente; 
+            return Cliente;
         }
 
+        //Valida que el usuario y la contraseña ingresada coincidan con un usuario existente en la base de datos.
         public static bool Validar(string usuarioSeleccionado, string contraseñaIngresada)
         {
             List<Cliente> clientes = GetAll();
@@ -48,6 +50,7 @@ namespace TP4_LEANDRO.Controladores
             // Solo compara la contraseña del usuario encontrado
             if (cliente.Contraseña == contraseñaIngresada)
             {
+                if (cliente.Es_Admin)
                     Console.WriteLine("Bienvenido Administrador");
                 else
                     Console.WriteLine("Bienvenido Usuario");
@@ -59,6 +62,29 @@ namespace TP4_LEANDRO.Controladores
                 return false;
             }
 
+        }
+
+
+        public static bool ValidarAdmin_Tecn(string usuarioSeleccionado, string contraseñaIngresada)
+        {
+            List<Cliente> clientes = GetAll();
+            Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == usuarioSeleccionado);
+            if (cliente == null && cliente.Es_Admin)
+            {
+                Console.WriteLine("El usuario no existe.");
+                return false;
+            }
+            // Solo compara la contraseña del usuario encontrado
+            if (cliente.Contraseña == contraseñaIngresada && cliente.Es_Admin)
+            {
+                Console.WriteLine("Bienvenido Administrador");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Contraseña incorrecta o no es un administrador.");
+                return false;
+            }
         }
     }
 }

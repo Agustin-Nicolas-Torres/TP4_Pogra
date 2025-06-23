@@ -1978,9 +1978,13 @@ namespace TP4_LEANDRO
         // Y en el botón de login de admin, asegúrate de llamar a MostrarPanelAdminPrincipal() si el login es correcto:
         private void BtnAdminEntrar_Click(object? sender, EventArgs e)
         {
-            if (txtAdminUsuario.Text == "Bender" && txtAdminContraseña.Text == "1234")
+            if (txtAdminUsuario.Text != "" && txtAdminContraseña.Text != "")
             {
-                MostrarPanelAdminPrincipal();
+                bool loginCorrecto = pInicio.ValidarAdmin_Tecn(txtAdminUsuario.Text, txtAdminContraseña.Text);
+                if (loginCorrecto)
+                {
+                    MostrarPanelAdminPrincipal();
+                }
             }
             else
             {

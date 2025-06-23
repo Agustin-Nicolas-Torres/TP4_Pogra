@@ -48,7 +48,6 @@ namespace TP4_LEANDRO.Controladores
             // Solo compara la contraseña del usuario encontrado
             if (cliente.Contraseña == contraseñaIngresada)
             {
-                if (cliente.Es_Admin)
                     Console.WriteLine("Bienvenido Administrador");
                 else
                     Console.WriteLine("Bienvenido Usuario");

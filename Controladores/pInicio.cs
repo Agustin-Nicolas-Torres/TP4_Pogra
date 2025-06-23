@@ -34,5 +34,32 @@ namespace TP4_LEANDRO.Controladores
             }
             return Cliente;
         }
+
+        public static bool Validar(string usuarioSeleccionado, string contraseñaIngresada)
+        {
+            List<Cliente> clientes = GetAll();
+            Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == usuarioSeleccionado);
+            if (cliente == null)
+            {
+                Console.WriteLine("El usuario no existe.");
+                return false;
+            }
+
+            // Solo compara la contraseña del usuario encontrado
+            if (cliente.Contraseña == contraseñaIngresada)
+            {
+                if (cliente.Es_Admin)
+                    Console.WriteLine("Bienvenido Administrador");
+                else
+                    Console.WriteLine("Bienvenido Usuario");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Contraseña incorrecta.");
+                return false;
+            }
+
+        }
     }
 }

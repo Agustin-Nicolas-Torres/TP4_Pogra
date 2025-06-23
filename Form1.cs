@@ -1711,13 +1711,17 @@ namespace TP4_LEANDRO
         private void BtnTecnicoLogin_Click(object? sender, EventArgs e)
         {
             // AGREGAR CON BASE DE DATOS   AGUSTIN TORRES
-            if (txtTecnicoUsuario.Text == "Leandro" && txtTecnicoContraseña.Text == "1234")
+            if (txtTecnicoUsuario.Text != "" && txtTecnicoContraseña.Text != "")
             {
-                panelLoginTecnico.Visible = false;
-                panelMenuLateralTecnico.Visible = true;
-                panelTecnico.Visible = true;
-                CentrarPanel(panelTecnico);
-                CargarTicketsTecnico();
+                bool loginCorrecto = pInicio.Validar(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
+                if (loginCorrecto)
+                {
+                    panelLoginTecnico.Visible = false;
+                    panelMenuLateralTecnico.Visible = true;
+                    panelTecnico.Visible = true;
+                    CentrarPanel(panelTecnico);
+                    CargarTicketsTecnico();
+                }
             }
             else
             {

@@ -1720,7 +1720,7 @@ namespace TP4_LEANDRO
                     panelMenuLateralTecnico.Visible = true;
                     panelTecnico.Visible = true;
                     CentrarPanel(panelTecnico);
-                    CargarTicketsTecnico();
+                    CargarTicketsTecnico(); 
                 }
             }
             else

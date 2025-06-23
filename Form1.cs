@@ -1232,24 +1232,31 @@ namespace TP4_LEANDRO
             CentrarPanel(panelEditarPedido);
         }
 
+        //Login del Usuario 
         private void BtnLoginEntrar_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtLoginNombre.Text) ||
-                string.IsNullOrWhiteSpace(txtLoginContraseña.Text))
+            if (txtLoginNombre.Text != "" && txtLoginContraseña.Text != "")
+            {
+                bool loginCorrecto = pInicio.Validar(txtLoginNombre.Text, txtLoginContraseña.Text);
+                if (loginCorrecto)
+                {
+
+                    lblUsuario.Text = $"Bienvenido, {txtLoginNombre.Text}";
+                    panelLogin.Visible = false;
+                    panelMenu.Visible = true;
+                    CentrarPanel(panelMenu);
+                    clienteActual = new Cliente
+                    {
+                        Usuario = txtLoginNombre.Text,
+                        Contraseña = txtLoginContraseña.Text
+                    };
+                }
+            }
+            else
             {
                 MostrarAviso("Datos requeridos", "Debe completar todos los campos para ingresar.");
                 return;
             }
-
-            lblUsuario.Text = $"Bienvenido, {txtLoginNombre.Text}";
-            panelLogin.Visible = false;
-            panelMenu.Visible = true;
-            CentrarPanel(panelMenu);
-            clienteActual = new Cliente
-            {
-                Usuario = txtLoginNombre.Text,
-                Contraseña = txtLoginContraseña.Text
-            };
         }
 
 
@@ -1708,9 +1715,10 @@ namespace TP4_LEANDRO
             public bool Atendido { get; set; }
         }
 
+        //Login Tecnico 
+
         private void BtnTecnicoLogin_Click(object? sender, EventArgs e)
         {
-            // AGREGAR CON BASE DE DATOS   AGUSTIN TORRES
             if (txtTecnicoUsuario.Text != "" && txtTecnicoContraseña.Text != "")
             {
                 bool loginCorrecto = pInicio.Validar(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
@@ -1975,7 +1983,7 @@ namespace TP4_LEANDRO
             CargarDatosAdmin();
         }
 
-        // Y en el botón de login de admin, asegúrate de llamar a MostrarPanelAdminPrincipal() si el login es correcto:
+        //Login Admin
         private void BtnAdminEntrar_Click(object? sender, EventArgs e)
         {
             if (txtAdminUsuario.Text != "" && txtAdminContraseña.Text != "")

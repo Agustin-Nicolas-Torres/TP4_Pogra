@@ -1764,7 +1764,7 @@ namespace TP4_LEANDRO
         {
             if (txtTecnicoUsuario.Text != "" && txtTecnicoContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.Validar(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
+                bool loginCorrecto = pInicio.ValidarTec(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
                 if (loginCorrecto)
                 {
                     panelLoginTecnico.Visible = false;
@@ -2018,7 +2018,7 @@ namespace TP4_LEANDRO
         {
             if (txtAdminUsuario.Text != "" && txtAdminContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.Validar(txtAdminUsuario.Text, txtAdminContraseña.Text);
+                bool loginCorrecto = pInicio.ValidarAdmin(txtAdminUsuario.Text, txtAdminContraseña.Text);
                 if (loginCorrecto)
                 {
                     MostrarPanelAdminPrincipal();
@@ -2172,7 +2172,7 @@ namespace TP4_LEANDRO
             btnEliminar.Click += BtnEliminar_Click;
 
             // Agrega el botón al panelAdministrador
-            panelAdministrador.Controls.Add(btnEliminar);
+           
 
             btnAdminCerrarSesion = new Button
             {

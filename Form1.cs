@@ -15,6 +15,7 @@ namespace TP4_LEANDRO
         private Button btnPrincipalAdmin = null!;
         private Button btnPrincipalTecnico = null!;
         private Button btnPrincipalCliente = null!;
+        private LinkLabel LinkCuentaNueva = null!;
         // Paneles principales
         private Panel panelHeader = null!;
         private Panel panelMenuLateral = null!; 
@@ -148,6 +149,22 @@ namespace TP4_LEANDRO
         private TextBox txtAdminContraseña = null!;
 
 
+        //Panel para registrarse
+        private Panel panelRegistro = null!;
+        private TextBox txtRegUsuario = null!;
+        private TextBox txtRegNombre = null!;
+        private TextBox txtRegApellido = null!;
+        private TextBox txtRegDNI = null!;
+        private TextBox txtRegCalle = null!;
+        private TextBox txtRegNumeroCalle = null!;
+        private TextBox txtRegProvincia = null!;
+        private TextBox txtRegEmail = null!;
+        private TextBox txtRegTelefono = null!;
+        private TextBox txtRegContraseña = null!;
+        private Button btnRegistrar = null!;
+        private Button btnCancelarRegistro = null!;
+
+
 
         public Form1()
         {
@@ -229,10 +246,76 @@ namespace TP4_LEANDRO
                 Font = new Font("Segoe UI", 12, FontStyle.Bold)
             };
 
+            LinkCuentaNueva = new LinkLabel
+            {
+                Text = "¿No tienes cuenta? Crea una aquí",
+                Top = 260,
+                Left = 220,
+                Width = 220,
+                Font = new Font("Segoe UI", 10, FontStyle.Underline),
+                LinkColor = Color.Blue,
+                Cursor = Cursors.Hand
+            };
+
+            //panel de lick de la cuenta
+            panelRegistro = new Panel
+            {
+                Size = new Size(450, 600),
+                BackColor = Color.White,
+                Visible = false
+            };
+            txtRegUsuario = new TextBox { PlaceholderText = "Usuario", Top = 30, Left = 100, Width = 250 };
+            txtRegNombre = new TextBox { PlaceholderText = "Nombre", Top = 80, Left = 100, Width = 250 };
+            txtRegApellido = new TextBox { PlaceholderText = "Apellido", Top = 130, Left = 100, Width = 250 };
+            txtRegDNI = new TextBox { PlaceholderText = "DNI", Top = 180, Left = 100, Width = 250 };
+            txtRegCalle = new TextBox { PlaceholderText = "Calle", Top = 230, Left = 100, Width = 250 };
+            txtRegNumeroCalle = new TextBox { PlaceholderText = "Número", Top = 280, Left = 100, Width = 250 };
+            txtRegProvincia = new TextBox { PlaceholderText = "Provincia", Top = 330, Left = 100, Width = 250 };
+            txtRegEmail = new TextBox { PlaceholderText = "Email", Top = 380, Left = 100, Width = 250 };
+            txtRegTelefono = new TextBox { PlaceholderText = "Teléfono", Top = 430, Left = 100, Width = 250 };
+            txtRegContraseña = new TextBox { PlaceholderText = "Contraseña", Top = 480, Left = 100, Width = 250, UseSystemPasswordChar = true };
+
+            btnRegistrar = new Button
+            {
+                Text = "Registrar",
+                Top = 510,
+                Left = 100,
+                Width = 250,
+                Height = 40,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White
+            };
+            btnRegistrar.Click += BtnRegistrar_Click;
+
+            btnCancelarRegistro = new Button
+            {
+                Text = "Cancelar",
+                Top = 550,
+                Left = 100,
+                Width = 250,
+                Height = 40,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnCancelarRegistro.Click += (s, e) =>
+            {
+                panelAviso.Visible = false;
+                panelRegistro.Visible = false;
+                panelPrincipal.Visible = true;
+            };
+
+            panelRegistro.Controls.AddRange(new Control[]
+            {
+    txtRegUsuario, txtRegNombre, txtRegApellido, txtRegDNI, txtRegCalle, txtRegNumeroCalle,
+    txtRegProvincia, txtRegEmail, txtRegTelefono, txtRegContraseña, btnRegistrar, btnCancelarRegistro
+            });
+            this.Controls.Add(panelRegistro);
+
             // Asigna los eventos Click
             btnPrincipalAdmin.Click += (s, e) => MostrarPanelAdministrador();
             btnPrincipalTecnico.Click += (s, e) => MostrarPanelTecnico();
             btnPrincipalCliente.Click += (s, e) => MostrarPanelCliente();
+            LinkCuentaNueva.Click += (s, e) => MostrarPanelRegistro();
 
             panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
             this.Controls.Add(panelPrincipal);
@@ -867,6 +950,10 @@ namespace TP4_LEANDRO
 
             btnLoginEntrar.Click += BtnLoginEntrar_Click;
             panelLogin.Controls.AddRange(new Control[] { txtLoginNombre, txtLoginContraseña, btnLoginEntrar });
+            panelLogin.Controls.Add(LinkCuentaNueva);
+            LinkCuentaNueva.Top = btnLoginEntrar.Bottom + 20;
+            LinkCuentaNueva.Left = btnLoginEntrar.Left;
+
             this.Controls.Add(panelLogin);
 
             // Panel Menú Principal (centrado)
@@ -1033,7 +1120,7 @@ namespace TP4_LEANDRO
         private void MostrarPanelCliente()
         {
             panelPrincipal.Visible = false;
-            panelMenuLateral.Visible = true; 
+            panelMenuLateral.Visible = false; 
             panelLogin.Visible = true;
             CentrarPanel(panelLogin);
         }
@@ -1049,6 +1136,7 @@ namespace TP4_LEANDRO
             CentrarPanel(panelLoginTecnico);
             panelLoginTecnico.BringToFront();
         }
+
         private void BotonMenu_Click(object? sender, EventArgs e)
         {
             if (sender is not Button btn) return;
@@ -1103,10 +1191,18 @@ namespace TP4_LEANDRO
 
         private void CentrarPanel(Panel panel)
         {
-            int leftPanelWidth = panelMenuLateral?.Width ?? 0;
-            panel.Left = leftPanelWidth + (this.ClientSize.Width - leftPanelWidth - panel.Width) / 2;
-            panel.Top = ((this.ClientSize.Height - panel.Height) / 2) + 25;
+            if (!this.Controls.Contains(panel))
+            {
+                this.Controls.Add(panel);
+            }
+            // Logic to center the panel
+            panel.Location = new Point((this.ClientSize.Width - panel.Width) / 2, (this.ClientSize.Height - panel.Height) / 2);
+            this.Resize += (s, e) =>
+            {
+                panel.Location = new Point((this.ClientSize.Width - panel.Width) / 2, (this.ClientSize.Height - panel.Height) / 2);
+            };
         }
+
 
         private void CentrarTodosLosPaneles()
         {
@@ -1131,6 +1227,7 @@ namespace TP4_LEANDRO
                 {
 
                     lblUsuario.Text = $"Bienvenido, {txtLoginNombre.Text}";
+                    panelMenuLateral.Visible = true;
                     panelLogin.Visible = false;
                     panelMenu.Visible = true;
                     CentrarPanel(panelMenu);
@@ -1850,6 +1947,13 @@ namespace TP4_LEANDRO
             CargarDatosAdmin();
         }
 
+        private void MostrarPanelRegistro()
+        {
+            panelLogin.Visible = false;
+            panelRegistro.Visible = true;
+            CentrarPanel(panelRegistro);
+        }
+
         //Login Admin
         private void BtnAdminEntrar_Click(object? sender, EventArgs e)
         {
@@ -2110,6 +2214,49 @@ namespace TP4_LEANDRO
             panelMenuLateralAdmin.Controls.Add(btnAdminDashboard);
         }
 
+        //Boton para registrarse 
+        private void BtnRegistrar_Click(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtRegUsuario.Text) ||
+                string.IsNullOrWhiteSpace(txtRegNombre.Text) ||
+                string.IsNullOrWhiteSpace(txtRegApellido.Text) ||
+                string.IsNullOrWhiteSpace(txtRegDNI.Text) ||
+                string.IsNullOrWhiteSpace(txtRegCalle.Text) ||
+                string.IsNullOrWhiteSpace(txtRegNumeroCalle.Text) ||
+                string.IsNullOrWhiteSpace(txtRegProvincia.Text) ||
+                string.IsNullOrWhiteSpace(txtRegEmail.Text) ||
+                string.IsNullOrWhiteSpace(txtRegTelefono.Text) ||
+                string.IsNullOrWhiteSpace(txtRegContraseña.Text))
+            {
+                MostrarAviso("Campos requeridos", "Debe completar todos los campos para registrarse.");
+                panelAviso.BringToFront();
+                return;
+            }
+
+
+            var nuevoCliente = new Cliente
+            {
+                ID = new Random().Next(1000, 9999),
+                Usuario = txtRegUsuario.Text,
+                Nombre = txtRegNombre.Text,
+                Apellido = txtRegApellido.Text,
+                DNI = txtRegDNI.Text,
+                Calle = txtRegCalle.Text,
+                NumeroCalle = txtRegNumeroCalle.Text,
+                Provincia = txtRegProvincia.Text,
+                Email = txtRegEmail.Text,
+                Telefono = txtRegTelefono.Text,
+                Contraseña = txtRegContraseña.Text,
+                Es_Admin = false
+            };
+
+            // Puedes guardar el cliente en una lista o base de datos aquí
+            // Ejemplo: clientes.Add(nuevoCliente);
+
+            MostrarAviso("Registro exitoso", "¡Cuenta creada correctamente! Ahora puede iniciar sesión.");
+            panelRegistro.Visible = false;
+            panelPrincipal.Visible = true;
+        }
         private void CargarDatosAdmin()
         {
             listViewAdmin.Items.Clear();

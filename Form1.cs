@@ -1697,6 +1697,7 @@ namespace TP4_LEANDRO
         });
                 item.Tag = ticket;
                 listViewTecnicoTickets.Items.Add(item);
+
             }
         }
 
@@ -1962,8 +1963,12 @@ namespace TP4_LEANDRO
                     var nuevoEstadoStr = row.Cells["EstadoCombo"].Value?.ToString();
                     if (Enum.TryParse<EstadoPedido>(nuevoEstadoStr, out var nuevoEstado))
                     {
+                        var estadoAnterior = pedido.Estado;
                         pedido.Estado = nuevoEstado;
                         row.Cells["Estado"].Value = nuevoEstado.ToString();
+
+                        // Agrega el log de auditoría
+                        logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{txtTecnicoUsuario.Text}|El Tecnico cambió el estado del pedido {pedido.NumeroSeguimiento} de {estadoAnterior} a {nuevoEstado}");
                     }
                 }
             }
@@ -2110,7 +2115,6 @@ namespace TP4_LEANDRO
                 Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom,
                 Visible = false
             };
-
             btnAdminClientes = new Button
             {
                 Text = "Clientes",
@@ -2232,6 +2236,35 @@ namespace TP4_LEANDRO
             listViewAdmin.Columns.Add("Nombre", 120);
             listViewAdmin.Columns.Add("Apellido", 120);
             listViewAdmin.Columns.Add("Email", 180);
+            var btnEliminarClientes = new Button
+            {
+                Name = "eliminar",
+                Text = "Eliminar",
+                Top = listViewAdmin.Top + listViewAdmin.Height + 20,
+                Left = listViewAdmin.Left,
+                Width = 180,
+                Height = 40,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold)
+            };
+            // Puedes agregar el evento después si lo necesitas
+            panelAdministrador.Controls.Add(btnEliminarClientes);
+
+            var btnActualizarClientes = new Button
+            {
+                Name = "Actualizar",
+                Text = "Actualizar",
+                Top = listViewAdmin.Top + listViewAdmin.Height + 20,
+                Left = listViewAdmin.Left + 250,
+                Width = 180,
+                Height = 40,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold)
+            };
+            // Puedes agregar el evento después si lo necesitas
+            panelAdministrador.Controls.Add(btnActualizarClientes);
 
             panelAdministrador.Controls.AddRange(new Control[]
             {
@@ -2394,12 +2427,13 @@ namespace TP4_LEANDRO
                 };
                 if (mostrandoClientes)
                 {
-                    // Aquí deberías agregar a la base de datos o lista real de clientes
-                    // Ejemplo: clientes.Add(nuevo);
+                    // clientes.Add(nuevo);
+                    logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{nuevo.Usuario}|Agregó el cliente {nuevo.Nombre} {nuevo.Apellido}");
                 }
                 else
                 {
                     tecnicos.Add(nuevo);
+                    logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{nuevo.Usuario}|Agregó el técnico {nuevo.Nombre} {nuevo.Apellido}");
                 }
                 form.Close();
                 CargarDatosAdmin();
@@ -2454,6 +2488,7 @@ namespace TP4_LEANDRO
                 {
                     // Eliminar de la lista real de clientes
                     // clientes.Remove(seleccionado);
+                    logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{(seleccionado?.Usuario ?? "Desconocido")}|Eliminó el cliente {seleccionado?.Nombre} {seleccionado?.Apellido}");
                 }
                 else
                 {
@@ -2486,17 +2521,18 @@ namespace TP4_LEANDRO
             listViewAdminPedidos.Columns.Add("Fecha", 120);
             listViewAdminPedidos.Columns.Add("Estado", 100);
             listViewAdminPedidos.Columns.Add("Cliente", 150);
-            listViewAdminPedidos.Columns.Add("Técnico", 120);
 
-            comboAsignarTecnico = new ComboBox { Left = 20, Top = 380, Width = 200 };
-            btnAsignarTecnico = new Button { Text = "Asignar Técnico", Left = 240, Top = 380, Width = 140 };
-            btnCambiarEstado = new Button { Text = "Cambiar Estado", Left = 400, Top = 380, Width = 140 };
-
+            btnCambiarEstado = new Button
+            {
+                Text = "Cambiar Estado",
+                Left = 20,
+                Top = 400,
+                Width = 100
+            };
             // Eventos para asignar técnico y cambiar estado
-            btnAsignarTecnico.Click += BtnAsignarTecnico_Click;
             btnCambiarEstado.Click += BtnCambiarEstado_Click;
 
-            panelAdminPedidos.Controls.AddRange(new Control[] { listViewAdminPedidos, comboAsignarTecnico, btnAsignarTecnico, btnCambiarEstado });
+            panelAdminPedidos.Controls.AddRange(new Control[] { listViewAdminPedidos, comboAsignarTecnico, btnCambiarEstado });
             this.Controls.Add(panelAdminPedidos);
 
             // Panel Auditoría
@@ -2565,9 +2601,6 @@ namespace TP4_LEANDRO
                 item.Tag = pedido;
                 listViewAdminPedidos.Items.Add(item);
             }
-            comboAsignarTecnico.Items.Clear();
-            foreach (var t in tecnicos)
-                comboAsignarTecnico.Items.Add($"{t.Nombre} {t.Apellido}");
         }
 
         private void MostrarPanelAdminAuditoria()
@@ -2618,9 +2651,78 @@ namespace TP4_LEANDRO
 
         private void BtnCambiarEstado_Click(object? sender, EventArgs e)
         {
-            // Aquí va la lógica para cambiar el estado de un pedido
-            // Por ejemplo, puedes mostrar un mensaje temporal:
-            MessageBox.Show("Funcionalidad de cambiar estado aún no implementada.");
+            if (listViewAdminPedidos.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Seleccione un pedido para cambiar el estado.");
+                return;
+            }
+
+            var item = listViewAdminPedidos.SelectedItems[0];
+            var pedido = item.Tag as Pedido;
+            if (pedido == null) return;
+
+            // Crear formulario modal con ComboBox
+            using (var form = new Form())
+            {
+                form.Text = "Cambiar Estado";
+                form.Size = new Size(350, 180);
+                form.FormBorderStyle = FormBorderStyle.FixedDialog;
+                form.StartPosition = FormStartPosition.CenterParent;
+                form.MaximizeBox = false;
+                form.MinimizeBox = false;
+
+                var label = new Label
+                {
+                    Text = "Seleccione el nuevo estado:",
+                    Left = 20,
+                    Top = 20,
+                    Width = 300
+                };
+                var combo = new ComboBox
+                {
+                    Left = 20,
+                    Top = 50,
+                    Width = 280,
+                    DropDownStyle = ComboBoxStyle.DropDownList
+                };
+                combo.Items.AddRange(Enum.GetNames(typeof(EstadoPedido)));
+                combo.SelectedItem = pedido.Estado.ToString();
+
+                var btnAceptar = new Button
+                {
+                    Text = "Aceptar",
+                    Left = 60,
+                    Top = 90,
+                    Width = 100,
+                    DialogResult = DialogResult.OK
+                };
+                var btnCancelar = new Button
+                {
+                    Text = "Cancelar",
+                    Left = 180,
+                    Top = 90,
+                    Width = 100,
+                    DialogResult = DialogResult.Cancel
+                };
+
+                form.Controls.Add(label);
+                form.Controls.Add(combo);
+                form.Controls.Add(btnAceptar);
+                form.Controls.Add(btnCancelar);
+                form.AcceptButton = btnAceptar;
+                form.CancelButton = btnCancelar;
+
+                if (form.ShowDialog() == DialogResult.OK && combo.SelectedItem != null)
+                {
+                    if (Enum.TryParse<EstadoPedido>(combo.SelectedItem.ToString(), out var nuevoEstado))
+                    {
+                        var estadoAnterior = pedido.Estado;
+                        pedido.Estado = nuevoEstado;
+                        logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{txtAdminUsuario.Text}|El admin cambió el estado del pedido {pedido.NumeroSeguimiento} de {estadoAnterior} a {nuevoEstado}");
+                        MostrarPanelAdminPedidos(); // Refresca la lista
+                    }
+                }
+            }
         }
 
         // Agrega este método en tu clase Form1:

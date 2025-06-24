@@ -27,18 +27,9 @@ namespace TP4_LEANDRO.Controladores
                 a.Usuario = Client_Conec.GetString(3);
                 a.Contraseña = Client_Conec.GetString(4);
                 object esAdminValue = Client_Conec.GetValue(5);
-                a.Es_Admin = esAdminValue is int i ? i == 1 :
-                             esAdminValue is long l ? l == 1 :
-                             esAdminValue is string s ? s == "1" || s.ToLower() == "true" :
-                             false;
+                a.Es_Admin = !Client_Conec.IsDBNull(5) && Client_Conec.GetInt32(5) == 1;
                 a.Email = Client_Conec.GetString(6);
-
-                // Asignar Es_Tecnico correctamente
-                object esTecValue = Client_Conec.GetValue(7);
-                a.Es_Tecn = esTecValue is int n ? n == 1 :
-                               esTecValue is long m ? m == 1 :
-                               esTecValue is string b ? b == "1" || b.ToLower() == "true" :
-                               false;
+                a.Es_Tecn = !Client_Conec.IsDBNull(7) && Client_Conec.GetInt32(7) == 1;
 
                 Cliente.Add(a);
             }
@@ -82,36 +73,53 @@ namespace TP4_LEANDRO.Controladores
                 Console.WriteLine("El usuario no existe.");
                 return false;
             }
-            // Solo compara la contraseña del usuario encontrado
-            if (cliente.Contraseña == contraseñaIngresada && cliente.Es_Admin)
+
+            if (cliente.Contraseña == contraseñaIngresada)
             {
-                Console.WriteLine("Bienvenido Administrador");
-                return true;
+                if (cliente.Es_Admin)
+                {
+                    Console.WriteLine("Bienvenido Administrador");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("El usuario no es administrador.");
+                    return false;
+                }
             }
             else
             {
-                Console.WriteLine("Contraseña incorrecta o no es un administrador.");
+                Console.WriteLine("Contraseña incorrecta.");
                 return false;
             }
         }
 
-        public static bool Validar_Tecn(string usuarioSeleccionado, string contraseñaIngresada)
+        public static bool ValidarTec(string usuarioSeleccionado, string contraseñaIngresada)
         {
             List<Cliente> clientes = GetAll();
             Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == usuarioSeleccionado);
             if (cliente == null)
             {
+                Console.WriteLine("El usuario no existe.");
                 return false;
             }
-            // Solo compara la contraseña del usuario encontrado y si es técnico
-            if (cliente.Contraseña == contraseñaIngresada && cliente.Es_Tecn)
+
+            if (cliente.Contraseña == contraseñaIngresada)
             {
-                Console.WriteLine("Bienvenido Técnico");
-                return true;
+                if (cliente.Es_Admin)
+                {
+                    Console.WriteLine("Bienvenido Administrador");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("El usuario no es administrador.");
+                    return false;
+                }
             }
             else
             {
-                Console.WriteLine("Contraseña incorrecta o no es técnico.");
+                Console.WriteLine("Contraseña incorrecta.");
                 return false;
             }
         }

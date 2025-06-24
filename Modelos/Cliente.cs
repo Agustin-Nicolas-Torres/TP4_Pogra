@@ -12,7 +12,7 @@ namespace TP4_LEANDRO.Modelos
         public string Apellido { get; set; }
         public string Contraseña { get; set; }
         public bool Es_Admin { get; set; }
-        public bool Es_Tecnico { get; set; }
+        public bool Es_Tecn { get; set; }
         public string DNI { get; set; }
         public string Calle { get; set; }
         public string NumeroCalle { get; set; }

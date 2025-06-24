@@ -14,7 +14,7 @@ namespace TP4_LEANDRO.Controladores
         {
             List<Cliente> Cliente = new List<Cliente>();
 
-            SQLiteCommand cmd = new SQLiteCommand("SELECT ID, Nombre, Apellido, N_User, Contraseña, Es_Admin, Email FROM Usuario");
+            SQLiteCommand cmd = new SQLiteCommand("SELECT ID, Nombre, Apellido, N_User, Contraseña, Es_Admin, Email, Es_Tecn FROM Usuario");
             cmd.Connection = Conexion.Connection;
             SQLiteDataReader Client_Conec = cmd.ExecuteReader();
 
@@ -32,15 +32,15 @@ namespace TP4_LEANDRO.Controladores
                              esAdminValue is string s ? s == "1" || s.ToLower() == "true" :
                              false;
                 a.Email = Client_Conec.GetString(6);
-                object esTecValue = Client_Conec.GetValue(7);
-                a.Es_Tecnico = esTecValue is int n ? n == 1 :
-                             esTecValue is long m ? m == 1 :
-                             esTecValue is string b ? b == "1" || b.ToLower() == "true" :
-                             false;
 
+                // Asignar Es_Tecnico correctamente
+                object esTecValue = Client_Conec.GetValue(7);
+                a.Es_Tecn = esTecValue is int n ? n == 1 :
+                               esTecValue is long m ? m == 1 :
+                               esTecValue is string b ? b == "1" || b.ToLower() == "true" :
+                               false;
 
                 Cliente.Add(a);
-
             }
             return Cliente;
         }
@@ -77,7 +77,7 @@ namespace TP4_LEANDRO.Controladores
         {
             List<Cliente> clientes = GetAll();
             Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == usuarioSeleccionado);
-            if (cliente == null && cliente.Es_Admin)
+            if (cliente == null)
             {
                 Console.WriteLine("El usuario no existe.");
                 return false;
@@ -99,19 +99,19 @@ namespace TP4_LEANDRO.Controladores
         {
             List<Cliente> clientes = GetAll();
             Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == usuarioSeleccionado);
-            if (cliente == null && cliente.Es_Admin)
+            if (cliente == null)
             {
                 return false;
             }
-            // Solo compara la contraseña del usuario encontrado
-            if (cliente.Contraseña == contraseñaIngresada && cliente.Es_Tecnico)
+            // Solo compara la contraseña del usuario encontrado y si es técnico
+            if (cliente.Contraseña == contraseñaIngresada && cliente.Es_Tecn)
             {
-                Console.WriteLine("Bienvenido Te");
+                Console.WriteLine("Bienvenido Técnico");
                 return true;
             }
             else
             {
-                Console.WriteLine("Contraseña incorrecta o no es un administrador.");
+                Console.WriteLine("Contraseña incorrecta o no es técnico.");
                 return false;
             }
         }

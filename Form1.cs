@@ -178,7 +178,7 @@ namespace TP4_LEANDRO
             InicializarPanelesAdminExtras();
             this.WindowState = FormWindowState.Maximized;
             InicializarPaneles();
-            this.Resize += (s, e) => CentrarTodosLosPaneles();
+        
         }
 
         private void InicializarPaneles()
@@ -1448,7 +1448,7 @@ namespace TP4_LEANDRO
             // Cambia aquí: usa ConsultaSoporteExtendido
             var consulta = new ConsultaSoporteExtendido
             {
-                NombreCliente = $"{clienteActual?.Nombre} {clienteActual?.Apellido}",
+                NombreCliente = $"{clienteActual?.Usuario} {clienteActual?.Apellido}",
                 Email = clienteActual?.Email ?? "",
                 Mensaje = txtSoporteMensaje.Text,
                 Fecha = DateTime.Now,
@@ -1764,7 +1764,7 @@ namespace TP4_LEANDRO
         {
             if (txtTecnicoUsuario.Text != "" && txtTecnicoContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.Validar_Tecn(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
+                bool loginCorrecto = pInicio.Validar(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
                 if (loginCorrecto)
                 {
                     panelLoginTecnico.Visible = false;
@@ -2001,6 +2001,9 @@ namespace TP4_LEANDRO
             CentrarPanel(panelAdministrador);
             panelAdministrador.BringToFront();
             CargarDatosAdmin();
+            // Asegúrate de que los botones estén habilitados
+            btnAdminClientes.Enabled = true;
+            btnAdminTecnicos.Enabled = true;
         }
 
         private void MostrarPanelRegistro()
@@ -2015,7 +2018,7 @@ namespace TP4_LEANDRO
         {
             if (txtAdminUsuario.Text != "" && txtAdminContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.ValidarAdmin(txtAdminUsuario.Text, txtAdminContraseña.Text);
+                bool loginCorrecto = pInicio.Validar(txtAdminUsuario.Text, txtAdminContraseña.Text);
                 if (loginCorrecto)
                 {
                     MostrarPanelAdminPrincipal();
@@ -2126,6 +2129,9 @@ namespace TP4_LEANDRO
             {
                 mostrandoClientes = true;
                 lblAdminTitulo.Text = "Administración de Clientes";
+                panelAdministrador.Visible = true; // <-- Asegura que el panel se muestre
+                CentrarPanel(panelAdministrador);
+                panelAdministrador.BringToFront();
                 CargarDatosAdmin();
             };
 
@@ -2147,8 +2153,26 @@ namespace TP4_LEANDRO
             {
                 mostrandoClientes = false;
                 lblAdminTitulo.Text = "Administración de Técnicos";
+                panelAdministrador.Visible = true; // <-- Asegura que el panel se muestre
+                CentrarPanel(panelAdministrador);
+                panelAdministrador.BringToFront();
                 CargarDatosAdmin();
             };
+            btnEliminar = new Button
+            {
+                Text = "Eliminar",
+                Top = 450,
+                Left = 500,
+                Width = 120,
+                Height = 35,
+                BackColor = Color.FromArgb(220, 36, 31),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold)
+            };
+            btnEliminar.Click += BtnEliminar_Click;
+
+            // Agrega el botón al panelAdministrador
+            panelAdministrador.Controls.Add(btnEliminar);
 
             btnAdminCerrarSesion = new Button
             {
@@ -2301,12 +2325,14 @@ namespace TP4_LEANDRO
             panelRegistro.Visible = false;
             panelPrincipal.Visible = true;
         }
+
         private void CargarDatosAdmin()
         {
             listViewAdmin.Items.Clear();
             if (mostrandoClientes)
             {
-                foreach (var c in pedidos.Select(p => p.Cliente).Where(c => !c.Es_Admin).DistinctBy(c => c.ID))
+                // Trae todos los clientes de la base de datos y filtra solo los que no son admin ni técnicos
+                foreach (var c in pInicio.GetAll().Where(c => !c.Es_Admin && !c.Es_Tecn))
                 {
                     var item = new ListViewItem(new[]
                     {
@@ -2322,7 +2348,8 @@ namespace TP4_LEANDRO
             }
             else
             {
-                foreach (var t in tecnicos)
+                // Trae todos los técnicos de la base de datos
+                foreach (var t in pInicio.GetAll().Where(t => t.Es_Tecn))
                 {
                     var item = new ListViewItem(new[]
                     {
@@ -2545,6 +2572,7 @@ namespace TP4_LEANDRO
 
         private void MostrarPanelAdminAuditoria()
         {
+            panelMenuLateralAdmin.Visible = true; // <-- Asegura que el menú lateral esté visible
             OcultarPanelesAdmin();
             CentrarPanel(panelAdminAuditoria);
             panelAdminAuditoria.Visible = true;
@@ -2565,6 +2593,7 @@ namespace TP4_LEANDRO
 
         private void MostrarPanelAdminDashboard()
         {
+            panelMenuLateralAdmin.Visible = true; // <-- Asegura que el menú lateral esté visible
             OcultarPanelesAdmin();
             CentrarPanel(panelAdminDashboard);
             panelAdministrador.Visible = false;

@@ -26,8 +26,11 @@ namespace TP4_LEANDRO.Controladores
                 a.Apellido = Client_Conec.GetString(2);
                 a.Usuario = Client_Conec.GetString(3);
                 a.Contraseña = Client_Conec.GetString(4);
-                string esAdminStr = Client_Conec.GetString(5);
-                a.Es_Admin = esAdminStr == "1";
+                object esAdminValue = Client_Conec.GetValue(5);
+                a.Es_Admin = esAdminValue is int i ? i == 1 :
+                             esAdminValue is long l ? l == 1 :
+                             esAdminValue is string s ? s == "1" || s.ToLower() == "true" :
+                             false;
                 a.Email = Client_Conec.GetString(6);
 
                 Cliente.Add(a);

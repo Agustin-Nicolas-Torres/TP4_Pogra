@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace TP4_LEANDRO
 {
@@ -2288,22 +2289,12 @@ namespace TP4_LEANDRO
                 return;
             }
 
-            var nuevoCliente = new Cliente
-            {
-                Usuario = txtRegUsuario.Text,
-                Nombre = txtRegNombre.Text,
-                Apellido = txtRegApellido.Text,
-                DNI = txtRegDNI.Text,
-                Calle = txtRegCalle.Text,
-                NumeroCalle = txtRegNumeroCalle.Text,
-                Provincia = txtRegProvincia.Text,
-                Email = txtRegEmail.Text,
-                Telefono = txtRegTelefono.Text,
-                Contraseña = txtRegContraseña.Text,
-                Es_Admin = false
-            };
+            pRegistro.Registrar_User(txtRegUsuario.Text, txtRegNombre.Text, txtRegApellido.Text, txtRegDNI.Text,
+            txtRegCalle.Text, txtRegNumeroCalle.Text, txtRegProvincia.Text, txtRegEmail.Text,
+            txtRegTelefono.Text, txtRegContraseña.Text);
 
-
+            // Puedes guardar el cliente en una lista o base de datos aquí
+            // Ejemplo: clientes.Add(nuevoCliente);
 
             MostrarAviso("Registro exitoso", "¡Cuenta creada correctamente! Ahora puede iniciar sesión.");
             panelRegistro.Visible = false;

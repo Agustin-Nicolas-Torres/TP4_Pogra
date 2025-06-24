@@ -1680,15 +1680,27 @@ namespace TP4_LEANDRO
             var item = listViewTecnicoTickets.SelectedItems[0];
             if (item.Tag is ConsultaSoporte ticket)
             {
-                // Buscar por email o por nombre completo
-                var cliente = pedidos.Select(p => p.Cliente)
-                    .FirstOrDefault(c =>
-                        (!string.IsNullOrEmpty(ticket.Email) && c.Email == ticket.Email) ||
-                        (!string.IsNullOrEmpty(ticket.NombreCliente) && $"{c.Nombre} {c.Apellido}" == ticket.NombreCliente)
-                    );
+                // 1. Buscar en la base de datos
+                var cliente = TP4_LEANDRO.Controladores.pInicio.BuscarClientePorEmailONombre(ticket.Email, ticket.NombreCliente);
+
+                // 2. Si no encuentra, buscar en la lista de pedidos en memoria
+                if (cliente == null)
+                {
+                    cliente = pedidos.Select(p => p.Cliente)
+                        .FirstOrDefault(c =>
+                            (!string.IsNullOrEmpty(ticket.Email) && c.Email == ticket.Email) ||
+                            (!string.IsNullOrEmpty(ticket.NombreCliente) && $"{c.Nombre} {c.Apellido}" == ticket.NombreCliente)
+                        );
+                }
+
                 if (cliente != null)
                 {
-                    string detalles = $"Nombre: {cliente.Nombre}\nApellido: {cliente.Apellido}\nDNI: {cliente.DNI}\nEmail: {cliente.Email}\nTeléfono: {cliente.Telefono}\nDirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
+                    string detalles = $"Nombre: {cliente.Nombre}\n" +
+                                      $"Apellido: {cliente.Apellido}\n" +
+                                      $"DNI: {cliente.DNI}\n" +
+                                      $"Email: {cliente.Email}\n" +
+                                      $"Teléfono: {cliente.Telefono}\n" +
+                                      $"Dirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
                     MostrarAviso("Datos del Cliente", detalles);
                 }
                 else
@@ -2233,10 +2245,8 @@ namespace TP4_LEANDRO
                 return;
             }
 
-
             var nuevoCliente = new Cliente
             {
-                ID = new Random().Next(1000, 9999),
                 Usuario = txtRegUsuario.Text,
                 Nombre = txtRegNombre.Text,
                 Apellido = txtRegApellido.Text,
@@ -2250,8 +2260,8 @@ namespace TP4_LEANDRO
                 Es_Admin = false
             };
 
-            // Puedes guardar el cliente en una lista o base de datos aquí
-            // Ejemplo: clientes.Add(nuevoCliente);
+            // Guarda el cliente en la base de datos
+            pInicio.InsertarCliente(nuevoCliente);
 
             MostrarAviso("Registro exitoso", "¡Cuenta creada correctamente! Ahora puede iniciar sesión.");
             panelRegistro.Visible = false;

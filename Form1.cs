@@ -171,14 +171,83 @@ namespace TP4_LEANDRO
         private Label lblDatosCliente = null!;
         private Button btnDatosClienteVolver = null!;
 
+        //etiqueta
+        private Button btnDescargarEtiqueta = null!;
+        private Label lblEtiquetaInstruccion = null!;
+        private Button btnDescargarLista = null!;
+
         public Form1()
         {
+
             InitializeComponent();
+            this.BackColor = Color.White;
             InicializarPanelesAdministrador(); // <-- Agrega esta línea aquí
             InicializarPanelesAdminExtras();
             this.WindowState = FormWindowState.Maximized;
             InicializarPaneles();
-        
+
+            // Label de bienvenida en el panel principal (más arriba y en gris)
+            var lblBienvenidos = new Label
+            {
+                Text = "BIENVENIDOS",
+                Font = new Font("Segoe UI", 30, FontStyle.Bold),
+                ForeColor = Color.FromArgb(158, 158, 158), // Gris
+                AutoSize = true,
+                Top = 5,
+                Left = (panelPrincipal.Width - 350) / 2 // Centrado aproximado
+            };
+            panelPrincipal.Controls.Add(lblBienvenidos);
+
+            var rutaLateral = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "imagenfondo.png");
+            if (File.Exists(rutaLateral))
+            {
+                var pictureBoxLateral = new PictureBox
+                {
+                    Top = 0,
+                    Left = 0,
+                    Width = 650, // Ancho deseado de la franja lateral
+                    Height = this.ClientSize.Height,
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Image = Image.FromFile(rutaLateral),
+                    BackColor = Color.Transparent,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left
+                };
+                this.Controls.Add(pictureBoxLateral);
+                pictureBoxLateral.SendToBack(); // Lo manda al fondo, detrás de los paneles
+                                                // Ajusta el alto cuando cambie el tamaño de la ventana
+                this.Resize += (s, e) =>
+                {
+                    pictureBoxLateral.Height = this.ClientSize.Height;
+                };
+            }
+            var rutaLateralDerecha = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "paquete.png");
+            if (File.Exists(rutaLateralDerecha))
+            {
+                int ancho = 580;
+                int alto = 550; // Altura deseada
+                var pictureBoxLateralDerecha = new PictureBox
+                {
+                    Width = ancho,
+                    Height = alto,
+                    Top = (this.ClientSize.Height - alto) / 2, // Centrado vertical
+                    Left = this.ClientSize.Width - ancho +150,
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Image = Image.FromFile(rutaLateralDerecha),
+                    BackColor = Color.Transparent,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Right
+                };
+                this.Controls.Add(pictureBoxLateralDerecha);
+                pictureBoxLateralDerecha.SendToBack();
+
+                // Ajusta la posición cuando cambie el tamaño de la ventana
+                this.Resize += (s, e) =>
+                {
+                    pictureBoxLateralDerecha.Top = (this.ClientSize.Height - pictureBoxLateralDerecha.Height) / 2;
+                    pictureBoxLateralDerecha.Left = this.ClientSize.Width - pictureBoxLateralDerecha.Width;
+                };
+            }
+
+
         }
 
         private void InicializarPaneles()
@@ -212,16 +281,18 @@ namespace TP4_LEANDRO
 
             panelPrincipal = new Panel
             {
-                Size = new Size(500, 300),
+                Size = new Size(750, 300),
                 BackColor = Color.White,
                 Location = new Point((this.ClientSize.Width - 500) / 2, (this.ClientSize.Height - 300) / 2),
                 Anchor = AnchorStyles.None
+
             };
+
             btnPrincipalAdmin = new Button
             {
                 Text = "Administrador",
-                Top = 40,
-                Left = 150,
+                Top = 230,
+                Left = 50, // Primer botón a la izquierda
                 Width = 200,
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31),
@@ -231,8 +302,8 @@ namespace TP4_LEANDRO
             btnPrincipalTecnico = new Button
             {
                 Text = "Técnico",
-                Top = 120,
-                Left = 150,
+                Top = 230, // Misma altura que el anterior
+                Left = 270, // 50 + 200 + 20 (espacio entre botones)
                 Width = 200,
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31),
@@ -242,14 +313,48 @@ namespace TP4_LEANDRO
             btnPrincipalCliente = new Button
             {
                 Text = "Cliente",
-                Top = 200,
-                Left = 150,
+                Top = 230, // Misma altura que los otros
+                Left = 490, // 270 + 200 + 20
                 Width = 200,
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31),
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold)
             };
+            CentrarPanel(panelPrincipal);
+
+            // PictureBox para mostrar la imagen en el panelPrincipal
+            var pictureBoxLogo = new PictureBox
+            {
+                Top = 120,
+                Left = 540,
+                Width = 100,
+                Height = 100,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Image = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "clientes.png"))
+            };
+            var pictureBoxLogo2 = new PictureBox
+            {
+                Top = 120,
+                Left = 315,
+                Width = 100,
+                Height = 100,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Image = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "tecnico.png"))
+            };
+            panelPrincipal.Controls.Add(pictureBoxLogo);
+            var pictureBoxLogo3 = new PictureBox
+            {
+                Top = 120,
+                Left = 100,
+                Width = 100,
+                Height = 100,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Image = Image.FromFile(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "admin.png"))
+            };
+            panelPrincipal.Controls.Add(pictureBoxLogo3);
+            // Agrega el PictureBox al panelPrincipal
+            panelPrincipal.Controls.Add(pictureBoxLogo2);
 
             // Panel para mostrar datos del cliente (para técnico)
             panelDatosCliente = new Panel
@@ -366,6 +471,7 @@ namespace TP4_LEANDRO
             btnPrincipalTecnico.Click += (s, e) => MostrarPanelTecnico();
             btnPrincipalCliente.Click += (s, e) => MostrarPanelCliente();
             LinkCuentaNueva.Click += (s, e) => MostrarPanelRegistro();
+            panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
 
             panelPrincipal.Controls.AddRange(new Control[] { btnPrincipalAdmin, btnPrincipalTecnico, btnPrincipalCliente });
             this.Controls.Add(panelPrincipal);
@@ -497,6 +603,26 @@ namespace TP4_LEANDRO
             panelLoginTecnico.Controls.AddRange(new Control[] { txtTecnicoUsuario, txtTecnicoContraseña, btnTecnicoLogin });
             this.Controls.Add(panelLoginTecnico);
 
+            // Botón "Volver" en el panel de login técnico
+            var btnLoginTecnicoVolver = new Button
+            {
+                Text = "Volver",
+                Width = btnTecnicoLogin.Width,
+                Height = btnTecnicoLogin.Height,
+                Left = btnTecnicoLogin.Left,
+                Top = btnTecnicoLogin.Bottom + 20,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                Anchor = btnTecnicoLogin.Anchor,
+                Font = btnTecnicoLogin.Font
+            };
+            btnLoginTecnicoVolver.Click += (s, e) =>
+            {
+                panelLoginTecnico.Visible = false;
+                panelPrincipal.Visible = true;
+                CentrarPanel(panelPrincipal);
+            };
+            panelLoginTecnico.Controls.Add(btnLoginTecnicoVolver);
             // Panel lateral para técnico
             panelMenuLateralTecnico = new Panel
             {
@@ -1004,6 +1130,25 @@ namespace TP4_LEANDRO
             LinkCuentaNueva.Top = btnLoginEntrar.Bottom + 20;
             LinkCuentaNueva.Left = btnLoginEntrar.Left;
 
+            // Botón "Volver" en el panel de login
+            var btnLoginVolver = new Button
+            {
+                Text = "Volver",
+                Width = panelLogin.Width - 100,
+                Height = 40,
+                Left = (panelLogin.Width - (panelLogin.Width - 100)) / 2,
+                Top = LinkCuentaNueva.Bottom + 10,
+                BackColor = Color.Gray,
+                ForeColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+            btnLoginVolver.Click += (s, e) =>
+            {
+                panelLogin.Visible = false;
+                panelPrincipal.Visible = true;
+                CentrarPanel(panelPrincipal);
+            };
+            panelLogin.Controls.Add(btnLoginVolver);
             this.Controls.Add(panelLogin);
 
             // Panel Menú Principal (centrado)
@@ -1043,7 +1188,33 @@ namespace TP4_LEANDRO
             lblDatosPedido = new Label { Top = 150, Left = 50, Width = 600, Height = 120, Font = new Font("Segoe UI", 10, FontStyle.Regular) };
             btnVerPedidos = new Button { Text = "Ver mis pedidos", Top = 300, Left = 50, Width = 200, Height = 40, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
             btnVerPedidos.Click += (s, e) => MostrarPanelListaPedidos();
+            // Botón Descargar Etiqueta
+            btnDescargarEtiqueta = new Button
+            {
+                Text = "Descargar",
+                Top = 300,
+                Left = 270,
+                Width = 200,
+                Height = 40,
+                BackColor = Color.FromArgb(33, 150, 243),
+                ForeColor = Color.White
+            };
+            btnDescargarEtiqueta.Click += BtnDescargarEtiqueta_Click;
+            panelEstado.Controls.Add(btnDescargarEtiqueta);
+
+            // Label de instrucción
+            lblEtiquetaInstruccion = new Label
+            {
+                Text = "Pegar esta Etiqueta en el paquete.",
+                Top = 350,
+                Left = 50,
+                Width = 600,
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 36, 31)
+            };
+            panelEstado.Controls.Add(lblEtiquetaInstruccion);
             panelEstado.Controls.AddRange(new Control[] { lblSeguimiento, lblEstado, lblFecha, lblDatosPedido, btnVerPedidos });
+
             this.Controls.Add(panelEstado);
 
             // Panel Lista de Pedidos (centrado)
@@ -1069,6 +1240,21 @@ namespace TP4_LEANDRO
             btnCancelar.Click += BtnCancelar_Click;
             btnVerDetalles = new Button { Text = "Ver Detalles", Top = 380, Left = 310, Width = 120, Height = 40, BackColor = Color.LightBlue, ForeColor = Color.Black };
             btnVerDetalles.Click += BtnVerDetalles_Click;
+            // Crear el botón Descargar
+            btnDescargarLista = new Button
+            {
+                Text = "Descargar",
+                Top = 380,
+                Left = 450, // Ajusta la posición según tu diseño
+                Width = 120,
+                Height = 40,
+                BackColor = Color.FromArgb(33, 150, 243),
+                ForeColor = Color.White
+            };
+            btnDescargarLista.Click += BtnDescargarEtiqueta_Click;
+
+            // Agregar el botón al panel de lista de pedidos
+            panelListaPedidos.Controls.Add(btnDescargarLista);
             btnVolver = new Button { Text = "Volver", Top = 380, Left = 450, Width = 120, Height = 40, BackColor = Color.Gray, ForeColor = Color.White };
             btnVolver.Click += (s, e) => MostrarPanelMenu();
             lblComentario = new Label { Top = 440, Left = 30, Width = 700, Height = 60, Font = new Font("Segoe UI", 10, FontStyle.Italic), ForeColor = Color.FromArgb(33, 37, 41) };
@@ -1186,7 +1372,62 @@ namespace TP4_LEANDRO
             CentrarPanel(panelLoginTecnico);
             panelLoginTecnico.BringToFront();
         }
+        private void BtnDescargarEtiqueta_Click(object? sender, EventArgs e)
+        {
+            if (pedidoActual == null)
+            {
+                MostrarAviso("Error", "No hay pedido para descargar.");
+                return;
+            }
 
+            using (var sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Imagen PNG (*.png)|*.png";
+                sfd.FileName = $"Etiqueta_{pedidoActual.NumeroSeguimiento}.png";
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    // Datos de la etiqueta
+                    string[] lineas = {
+
+                $"N° Seguimiento: {pedidoActual.NumeroSeguimiento}",
+                $"Cliente: {pedidoActual.Cliente.Usuario} {pedidoActual.Cliente.Apellido}",
+                $"Dirección: {pedidoActual.Cliente.Calle} {pedidoActual.Cliente.NumeroCalle}, {pedidoActual.Cliente.Provincia}",
+                $"Email: {pedidoActual.Cliente.Email}",
+                $"Teléfono: {pedidoActual.Cliente.Telefono}",
+                $"Fecha de alta: {pedidoActual.Fecha:dd/MM/yyyy HH:mm}"
+            };
+
+                    // Configuración de la imagen
+                    int width = 500;
+                    int height = 40 + lineas.Length * 40 + 30;
+                    using (var bmp = new Bitmap(width, height))
+                    using (var g = Graphics.FromImage(bmp))
+                    {
+                        g.Clear(Color.White);
+                        using (var font = new Font("Segoe UI", 16, FontStyle.Bold))
+                        using (var font2 = new Font("Segoe UI", 13, FontStyle.Regular))
+                        using (var brush = new SolidBrush(Color.Black))
+                        using (var brushRed = new SolidBrush(Color.FromArgb(220, 36, 31)))
+                        {
+                            // Título en rojo
+                            g.DrawString(lineas[0], font, brushRed, 20, 20);
+                            // Resto de los datos
+                            for (int i = 1; i < lineas.Length; i++)
+                            {
+                                g.DrawString(lineas[i], font2, brush, 20, 20 + i * 40);
+                            }
+                            // Instrucción
+                            using (var fontInstr = new Font("Segoe UI", 12, FontStyle.Bold))
+                            {
+                                g.DrawString("Pegar esta Etiqueta en el paquete.", fontInstr, brushRed, 20, height - 35);
+                            }
+                        }
+                        bmp.Save(sfd.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                    MostrarAviso("Etiqueta descargada", "La etiqueta se guardó correctamente como imagen PNG.");
+                }
+            }
+        }
         private void BotonMenu_Click(object? sender, EventArgs e)
         {
             if (sender is not Button btn) return;
@@ -1379,6 +1620,7 @@ namespace TP4_LEANDRO
                 panelAviso.Controls[3].Visible = false;
             panelAviso.Visible = true;
             CentrarPanel(panelAviso);
+            panelAviso.BringToFront();
         }
 
         // Nuevo: Mostrar aviso con botón "Ver mis Tickets"
@@ -1415,6 +1657,7 @@ namespace TP4_LEANDRO
             }
             panelAviso.Visible = true;
             CentrarPanel(panelAviso);
+            panelAviso.BringToFront();
         }
 
         // Nuevo: Panel para mostrar tickets enviados
@@ -1435,6 +1678,7 @@ namespace TP4_LEANDRO
             }
             panelTickets.Visible = true;
             CentrarPanel(panelTickets);
+            panelTickets.BringToFront();
         }
 
         private void BtnEnviarSoporte_Click(object? sender, EventArgs e)
@@ -1499,8 +1743,7 @@ namespace TP4_LEANDRO
             lblEstado.Text = $"Estado: {pedidoActual.Estado}";
             lblFecha.Text = $"Fecha de alta: {pedidoActual.Fecha:dd/MM/yyyy HH:mm}";
             lblDatosPedido.Text =
-                $"Cliente: {clienteActual.Nombre} {clienteActual.Apellido}\n" +
-                $"DNI: {clienteActual.DNI}\n" +
+                $"Cliente: {clienteActual.Usuario} {clienteActual.Apellido}\n" +
                 $"Dirección: {clienteActual.Calle} {clienteActual.NumeroCalle}, {clienteActual.Provincia}\n" +
                 $"Email: {clienteActual.Email}\n" +
                 $"Teléfono: {clienteActual.Telefono}";
@@ -2103,6 +2346,24 @@ namespace TP4_LEANDRO
             };
             btnAdminEntrar.Click += BtnAdminEntrar_Click;
             panelAdminLogin.Controls.AddRange(new Control[] { txtAdminUsuario, txtAdminContraseña, btnAdminEntrar });
+            // Agrega esto después de btnAdminEntrar en InicializarPanelesAdministrador
+            var btnAdminVolver = new Button
+            {
+                Text = "Volver",
+                Width = 250,
+                Height = 40,
+                Left = 75,
+                Top = btnAdminEntrar.Bottom + 20,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnAdminVolver.Click += (s, e) =>
+            {
+                panelAdminLogin.Visible = false;
+                panelPrincipal.Visible = true;
+                CentrarPanel(panelPrincipal);
+            };
+            panelAdminLogin.Controls.Add(btnAdminVolver);
             this.Controls.Add(panelAdminLogin);
 
             // Panel lateral administrador
@@ -2118,7 +2379,7 @@ namespace TP4_LEANDRO
             btnAdminClientes = new Button
             {
                 Text = "Clientes",
-                Top = 50,
+                Top = 160,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -2142,7 +2403,7 @@ namespace TP4_LEANDRO
             btnAdminTecnicos = new Button
             {
                 Text = "Técnicos",
-                Top = 110,
+                Top = 210,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -2162,10 +2423,11 @@ namespace TP4_LEANDRO
                 panelAdministrador.BringToFront();
                 CargarDatosAdmin();
             };
+
             btnEliminar = new Button
             {
                 Text = "Eliminar",
-                Top = 450,
+                Top = 480,
                 Left = 500,
                 Width = 120,
                 Height = 35,
@@ -2181,7 +2443,7 @@ namespace TP4_LEANDRO
             btnAdminCerrarSesion = new Button
             {
                 Text = "Cerrar Sesión",
-                Top = 400,
+                Top = 520,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -2257,7 +2519,7 @@ namespace TP4_LEANDRO
                 Text = "Actualizar",
                 Top = listViewAdmin.Top + listViewAdmin.Height + 20,
                 Left = listViewAdmin.Left + 250,
-                Width = 180,
+                Width = 290,
                 Height = 40,
                 BackColor = Color.FromArgb(220, 36, 31),
                 ForeColor = Color.White,
@@ -2276,7 +2538,7 @@ namespace TP4_LEANDRO
             var btnAdminPedidos = new Button
             {
                 Text = "Pedidos",
-                Top = 170,
+                Top = 280,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -2294,7 +2556,7 @@ namespace TP4_LEANDRO
             var btnAdminAuditoria = new Button
             {
                 Text = "Auditoría",
-                Top = 230,
+                Top = 330,
                 Left = 10,
                 Width = 200,
                 Height = 45,
@@ -2312,7 +2574,7 @@ namespace TP4_LEANDRO
             var btnAdminDashboard = new Button
             {
                 Text = "Dashboard",
-                Top = 290,
+                Top = 400,
                 Left = 10,
                 Width = 200,
                 Height = 45,

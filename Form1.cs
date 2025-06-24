@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Data.SQLite;
 
 namespace TP4_LEANDRO
 {
@@ -2233,22 +2234,9 @@ namespace TP4_LEANDRO
                 return;
             }
 
-
-            var nuevoCliente = new Cliente
-            {
-                ID = new Random().Next(1000, 9999),
-                Usuario = txtRegUsuario.Text,
-                Nombre = txtRegNombre.Text,
-                Apellido = txtRegApellido.Text,
-                DNI = txtRegDNI.Text,
-                Calle = txtRegCalle.Text,
-                NumeroCalle = txtRegNumeroCalle.Text,
-                Provincia = txtRegProvincia.Text,
-                Email = txtRegEmail.Text,
-                Telefono = txtRegTelefono.Text,
-                Contraseña = txtRegContraseña.Text,
-                Es_Admin = false
-            };
+            pRegistro.Registrar_User(txtRegUsuario.Text, txtRegNombre.Text, txtRegApellido.Text, txtRegDNI.Text,
+            txtRegCalle.Text, txtRegNumeroCalle.Text, txtRegProvincia.Text, txtRegEmail.Text,
+            txtRegTelefono.Text, txtRegContraseña.Text);
 
             // Puedes guardar el cliente en una lista o base de datos aquí
             // Ejemplo: clientes.Add(nuevoCliente);

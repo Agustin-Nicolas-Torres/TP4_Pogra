@@ -165,6 +165,10 @@ namespace TP4_LEANDRO
         private Button btnCancelarRegistro = null!;
 
 
+        private Panel panelDatosCliente = null!;
+        private Label lblDatosClienteTitulo = null!;
+        private Label lblDatosCliente = null!;
+        private Button btnDatosClienteVolver = null!;
 
         public Form1()
         {
@@ -245,6 +249,51 @@ namespace TP4_LEANDRO
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold)
             };
+
+            // Panel para mostrar datos del cliente (para técnico)
+            panelDatosCliente = new Panel
+            {
+                Size = new Size(400, 400),
+                BackColor = Color.White,
+                Visible = false
+            };
+            lblDatosClienteTitulo = new Label
+            {
+                Text = "Datos del Cliente",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                ForeColor = Color.FromArgb(220, 36, 31),
+                Top = 20,
+                Left = 30,
+                Width = 340
+            };
+            lblDatosCliente = new Label
+            {
+                Text = "",
+                Font = new Font("Segoe UI", 12, FontStyle.Regular),
+                ForeColor = Color.Black,
+                Top = 70,
+                Left = 30,
+                Width = 340,
+                Height = 220
+            };
+            btnDatosClienteVolver = new Button
+            {
+                Text = "Volver",
+                Top = 320,
+                Left = 130,
+                Width = 120,
+                Height = 40,
+                BackColor = Color.Gray,
+                ForeColor = Color.White
+            };
+            btnDatosClienteVolver.Click += (s, e) =>
+            {
+                panelDatosCliente.Visible = false;
+                panelTecnico.Visible = true;
+                CentrarPanel(panelTecnico);
+            };
+            panelDatosCliente.Controls.AddRange(new Control[] { lblDatosClienteTitulo, lblDatosCliente, btnDatosClienteVolver });
+            this.Controls.Add(panelDatosCliente);
 
             LinkCuentaNueva = new LinkLabel
             {
@@ -1677,35 +1726,29 @@ namespace TP4_LEANDRO
                 MostrarAviso("Atención", "Seleccione un ticket para ver el cliente.");
                 return;
             }
+
             var item = listViewTecnicoTickets.SelectedItems[0];
             if (item.Tag is ConsultaSoporte ticket)
             {
-                // 1. Buscar en la base de datos
-                var cliente = TP4_LEANDRO.Controladores.pInicio.BuscarClientePorEmailONombre(ticket.Email, ticket.NombreCliente);
-
-                // 2. Si no encuentra, buscar en la lista de pedidos en memoria
-                if (cliente == null)
-                {
-                    cliente = pedidos.Select(p => p.Cliente)
-                        .FirstOrDefault(c =>
-                            (!string.IsNullOrEmpty(ticket.Email) && c.Email == ticket.Email) ||
-                            (!string.IsNullOrEmpty(ticket.NombreCliente) && $"{c.Nombre} {c.Apellido}" == ticket.NombreCliente)
-                        );
-                }
-
+                // Busca el cliente por nombre y apellido (ajusta si usas otro identificador)
+                List<Cliente> clientes = pInicio.GetAll();
+                Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == ticket.NombreCliente);
                 if (cliente != null)
                 {
                     string detalles = $"Nombre: {cliente.Nombre}\n" +
                                       $"Apellido: {cliente.Apellido}\n" +
                                       $"DNI: {cliente.DNI}\n" +
+                                      $"Usuario: {cliente.Usuario}\n" +
+                                      $"Calle: {cliente.Calle}\n" +
+                                      $"Número: {cliente.NumeroCalle}\n" +
+                                      $"Provincia: {cliente.Provincia}\n" +
                                       $"Email: {cliente.Email}\n" +
-                                      $"Teléfono: {cliente.Telefono}\n" +
-                                      $"Dirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
-                    MostrarAviso("Datos del Cliente", detalles);
+                                      $"Teléfono: {cliente.Telefono}";
+                    MostrarAviso("Detalles del Cliente", detalles);
                 }
                 else
                 {
-                    MostrarAviso("No encontrado", "No se encontró el cliente.");
+                    MostrarAviso("Atención", "No se encontró el cliente en la base de datos.");
                 }
             }
         }
@@ -2260,8 +2303,7 @@ namespace TP4_LEANDRO
                 Es_Admin = false
             };
 
-            // Guarda el cliente en la base de datos
-            pInicio.InsertarCliente(nuevoCliente);
+
 
             MostrarAviso("Registro exitoso", "¡Cuenta creada correctamente! Ahora puede iniciar sesión.");
             panelRegistro.Visible = false;
@@ -2567,6 +2609,22 @@ namespace TP4_LEANDRO
             panelAdminPedidos.Visible = false;
             panelAdminAuditoria.Visible = false;
             panelAdminDashboard.Visible = false;
+        }
+
+        private void MostrarPanelDatosCliente(Cliente cliente)
+        {
+            lblDatosCliente.Text =
+                $"Nombre: {cliente.Nombre}\n" +
+                $"Apellido: {cliente.Apellido}\n" +
+                $"DNI: {cliente.DNI}\n" +
+                $"Usuario: {cliente.Usuario}\n" +
+                $"Email: {cliente.Email}\n" +
+                $"Teléfono: {cliente.Telefono}\n" +
+                $"Dirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
+            panelTecnico.Visible = false;
+            panelDatosCliente.Visible = true;
+            CentrarPanel(panelDatosCliente);
+            panelDatosCliente.BringToFront();
         }
 
         // Agrega este método en tu clase Form1:

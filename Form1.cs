@@ -1382,7 +1382,7 @@ namespace TP4_LEANDRO
         }
 
         // Nuevo: Mostrar aviso con botón "Ver mis Tickets"
-        private void MostrarAvisoConBotonTickets(string titulo, string mensaje)
+        public void MostrarAvisoConBotonTickets(string titulo, string mensaje)
         {
             lblAvisoTitulo.Text = titulo;
             lblAvisoMensaje.Text = mensaje;
@@ -1764,7 +1764,7 @@ namespace TP4_LEANDRO
         {
             if (txtTecnicoUsuario.Text != "" && txtTecnicoContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.Validar(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
+                bool loginCorrecto = pInicio.Validar_Tecn(txtTecnicoUsuario.Text, txtTecnicoContraseña.Text);
                 if (loginCorrecto)
                 {
                     panelLoginTecnico.Visible = false;
@@ -2015,7 +2015,7 @@ namespace TP4_LEANDRO
         {
             if (txtAdminUsuario.Text != "" && txtAdminContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.ValidarAdmin_Tecn(txtAdminUsuario.Text, txtAdminContraseña.Text);
+                bool loginCorrecto = pInicio.ValidarAdmin(txtAdminUsuario.Text, txtAdminContraseña.Text);
                 if (loginCorrecto)
                 {
                     MostrarPanelAdminPrincipal();
@@ -2297,6 +2297,7 @@ namespace TP4_LEANDRO
             // Ejemplo: clientes.Add(nuevoCliente);
 
             MostrarAviso("Registro exitoso", "¡Cuenta creada correctamente! Ahora puede iniciar sesión.");
+            panelAviso.BringToFront();
             panelRegistro.Visible = false;
             panelPrincipal.Visible = true;
         }

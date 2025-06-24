@@ -86,5 +86,33 @@ namespace TP4_LEANDRO.Controladores
                 return false;
             }
         }
+
+        public static Cliente? BuscarClientePorEmailONombre(string email, string nombreCompleto)
+        {
+            List<Cliente> clientes = GetAll();
+            return clientes.FirstOrDefault(c =>
+                (!string.IsNullOrEmpty(email) && c.Email == email) ||
+                (!string.IsNullOrEmpty(nombreCompleto) && $"{c.Nombre} {c.Apellido}" == nombreCompleto)
+            );
+        }
+
+        public static void InsertarCliente(Cliente cliente)
+        {
+            using (var cmd = new SQLiteCommand("INSERT INTO Usuario (Nombre, Apellido, N_User, Contraseña, Es_Admin, Email, DNI, Calle, NumeroCalle, Provincia, Telefono) VALUES (@Nombre, @Apellido, @N_User, @Contraseña, @Es_Admin, @Email, @DNI, @Calle, @NumeroCalle, @Provincia, @Telefono)", Conexion.Connection))
+            {
+                cmd.Parameters.AddWithValue("@Nombre", cliente.Nombre);
+                cmd.Parameters.AddWithValue("@Apellido", cliente.Apellido);
+                cmd.Parameters.AddWithValue("@N_User", cliente.Usuario);
+                cmd.Parameters.AddWithValue("@Contraseña", cliente.Contraseña);
+                cmd.Parameters.AddWithValue("@Es_Admin", cliente.Es_Admin ? 1 : 0);
+                cmd.Parameters.AddWithValue("@Email", cliente.Email);
+                cmd.Parameters.AddWithValue("@DNI", cliente.DNI);
+                cmd.Parameters.AddWithValue("@Calle", cliente.Calle);
+                cmd.Parameters.AddWithValue("@NumeroCalle", cliente.NumeroCalle);
+                cmd.Parameters.AddWithValue("@Provincia", cliente.Provincia);
+                cmd.Parameters.AddWithValue("@Telefono", cliente.Telefono);
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

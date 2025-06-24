@@ -2884,6 +2884,23 @@ namespace TP4_LEANDRO
                 if (partes.Length == 3)
                     listViewAdminAuditoria.Items.Add(new ListViewItem(partes));
             }
+
+            // 1. Cargar registros de la base de datos
+            var auditorias = pAusitoria.GetAllAuditoria();
+            foreach (var a in auditorias)
+            {
+                // Asume que las columnas son: Fecha, Usuario, Acción
+                var item = new ListViewItem(new[] { a.Fecha, a.Usuario, a.Accion });
+                listViewAdminAuditoria.Items.Add(item);
+            }
+
+            foreach (ListViewItem item in listViewAdminAuditoria.Items)
+            {
+                string fecha = item.SubItems[0].Text;
+                string usuario = item.SubItems[1].Text;
+                string accion = item.SubItems[2].Text;
+                TP4_LEANDRO.Controladores.pAusitoria.Registrar_Auditoria(fecha, usuario, accion);
+            }
         }
 
         private void MostrarPanelAdminDashboard()

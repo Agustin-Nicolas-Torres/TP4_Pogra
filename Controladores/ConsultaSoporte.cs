@@ -4,6 +4,6 @@
     public string Email { get; set; }
     public string Mensaje { get; set; }
     public DateTime Fecha { get; set; } = DateTime.Now;
-    //Pruba git
+
 
 }

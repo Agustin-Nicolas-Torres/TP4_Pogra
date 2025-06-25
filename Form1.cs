@@ -180,26 +180,26 @@ namespace TP4_LEANDRO
         {
 
             InitializeComponent();
-            this.BackColor = Color.White;
-            InicializarPanelesAdministrador(); // <-- Agrega esta línea aquí
+            this.BackColor = Color.White; // Fondo blanco para toda la ventana
+            InicializarPanelesAdministrador(); 
             InicializarPanelesAdminExtras();
-            this.WindowState = FormWindowState.Maximized;
+            this.WindowState = FormWindowState.Maximized; // Ventana maximizada al iniciar
             InicializarPaneles();
 
-            // Label de bienvenida en el panel principal (más arriba y en gris)
+            // Label de bienvenida en el panel principal
             var lblBienvenidos = new Label
             {
                 Text = "BIENVENIDOS",
                 Font = new Font("Segoe UI", 30, FontStyle.Bold),
-                ForeColor = Color.FromArgb(158, 158, 158), // Gris
-                AutoSize = true,
+                ForeColor = Color.FromArgb(158, 158, 158), 
+                AutoSize = true, // Centrado automático
                 Top = 5,
-                Left = (panelPrincipal.Width - 350) / 2 // Centrado aproximado
+                Left = (panelPrincipal.Width - 350) / 2 // Centrado horizontalmente
             };
-            panelPrincipal.Controls.Add(lblBienvenidos);
+            panelPrincipal.Controls.Add(lblBienvenidos); // Agrega la etiqueta al panel principal
 
             var rutaLateral = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "imagenfondo.png");
-            if (File.Exists(rutaLateral))
+            if (File.Exists(rutaLateral)) // Verifica si el archivo existe antes de crear el PictureBox
             {
                 var pictureBoxLateral = new PictureBox
                 {
@@ -210,14 +210,14 @@ namespace TP4_LEANDRO
                     SizeMode = PictureBoxSizeMode.StretchImage,
                     Image = Image.FromFile(rutaLateral),
                     BackColor = Color.Transparent,
-                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left
+                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left // Ancla a la parte izquierda de la ventana
                 };
-                this.Controls.Add(pictureBoxLateral);
+                this.Controls.Add(pictureBoxLateral); // Agrega el PictureBox al formulario
                 pictureBoxLateral.SendToBack(); // Lo manda al fondo, detrás de los paneles
                                                 // Ajusta el alto cuando cambie el tamaño de la ventana
-                this.Resize += (s, e) =>
+                this.Resize += (s, e) => // Ajusta la altura del PictureBox al cambiar el tamaño de la ventana
                 {
-                    pictureBoxLateral.Height = this.ClientSize.Height;
+                    pictureBoxLateral.Height = this.ClientSize.Height; // Mantiene la altura del PictureBox igual a la altura del formulario
                 };
             }
             var rutaLateralDerecha = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "imagenes", "paquete.png");
@@ -255,24 +255,24 @@ namespace TP4_LEANDRO
 
 
             // Header con usuario
-            panelHeader = new Panel
+            panelHeader = new Panel // Panel superior para el encabezado
             {
-                Dock = DockStyle.Top,
+                Dock = DockStyle.Top, // Ancla al borde superior de la ventana
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31)
             };
             lblUsuario = new Label
             {
-                Text = $"Bienvenido", // Texto por defecto, se actualizará al iniciar sesión
+                Text = $"Bienvenido", 
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 AutoSize = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 TextAlign = ContentAlignment.MiddleRight,
                 Top = 15,
-                Left = this.ClientSize.Width - 220
+                Left = this.ClientSize.Width - 220 // Alinea a la derecha con un margen
             };
-            panelHeader.Controls.Add(lblUsuario);
+            panelHeader.Controls.Add(lblUsuario); // Agrega la etiqueta al panel de encabezado
             this.Controls.Add(panelHeader);
             panelHeader.Resize += (s, e) =>
             {
@@ -284,7 +284,7 @@ namespace TP4_LEANDRO
                 Size = new Size(750, 300),
                 BackColor = Color.White,
                 Location = new Point((this.ClientSize.Width - 500) / 2, (this.ClientSize.Height - 300) / 2),
-                Anchor = AnchorStyles.None
+                Anchor = AnchorStyles.None 
 
             };
 
@@ -292,7 +292,7 @@ namespace TP4_LEANDRO
             {
                 Text = "Administrador",
                 Top = 230,
-                Left = 50, // Primer botón a la izquierda
+                Left = 50, 
                 Width = 200,
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31),
@@ -302,8 +302,8 @@ namespace TP4_LEANDRO
             btnPrincipalTecnico = new Button
             {
                 Text = "Técnico",
-                Top = 230, // Misma altura que el anterior
-                Left = 270, // 50 + 200 + 20 (espacio entre botones)
+                Top = 230, 
+                Left = 270, 
                 Width = 200,
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31),
@@ -313,15 +313,15 @@ namespace TP4_LEANDRO
             btnPrincipalCliente = new Button
             {
                 Text = "Cliente",
-                Top = 230, // Misma altura que los otros
-                Left = 490, // 270 + 200 + 20
+                Top = 230, 
+                Left = 490, 
                 Width = 200,
                 Height = 50,
                 BackColor = Color.FromArgb(220, 36, 31),
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold)
             };
-            CentrarPanel(panelPrincipal);
+            CentrarPanel(panelPrincipal); 
 
             // PictureBox para mostrar la imagen en el panelPrincipal
             var pictureBoxLogo = new PictureBox
@@ -419,7 +419,9 @@ namespace TP4_LEANDRO
                 BackColor = Color.White,
                 Visible = false
             };
-            txtRegUsuario = new TextBox { PlaceholderText = "Usuario", Top = 30, Left = 100, Width = 250 };
+            // Campos de registro
+
+            txtRegUsuario = new TextBox { PlaceholderText = "Usuario", Top = 30, Left = 100, Width = 250 }; 
             txtRegNombre = new TextBox { PlaceholderText = "Nombre", Top = 80, Left = 100, Width = 250 };
             txtRegApellido = new TextBox { PlaceholderText = "Apellido", Top = 130, Left = 100, Width = 250 };
             txtRegDNI = new TextBox { PlaceholderText = "DNI", Top = 180, Left = 100, Width = 250 };
@@ -428,7 +430,7 @@ namespace TP4_LEANDRO
             txtRegProvincia = new TextBox { PlaceholderText = "Provincia", Top = 330, Left = 100, Width = 250 };
             txtRegEmail = new TextBox { PlaceholderText = "Email", Top = 380, Left = 100, Width = 250 };
             txtRegTelefono = new TextBox { PlaceholderText = "Teléfono", Top = 430, Left = 100, Width = 250 };
-            txtRegContraseña = new TextBox { PlaceholderText = "Contraseña", Top = 480, Left = 100, Width = 250, UseSystemPasswordChar = true };
+            txtRegContraseña = new TextBox { PlaceholderText = "Contraseña", Top = 480, Left = 100, Width = 250, UseSystemPasswordChar = true }; // EL ueSystemPasswordChar permite ocultar la contraseña ingresada
 
             btnRegistrar = new Button
             {
@@ -675,14 +677,14 @@ namespace TP4_LEANDRO
             dgvSeguimientos.Columns.Add("NumeroSeguimiento", "Seguimiento");
             dgvSeguimientos.Columns.Add("Cliente", "Cliente");
             dgvSeguimientos.Columns.Add("Estado", "Estado");
-            dgvSeguimientos.CellValueChanged += DgvSeguimientos_CellValueChanged;
+            dgvSeguimientos.CellValueChanged += DgvSeguimientos_CellValueChanged; // Evento para manejar cambios en el estado del seguimiento
             dgvSeguimientos.CurrentCellDirtyStateChanged += (s, e) =>
             {
                 if (dgvSeguimientos.IsCurrentCellDirty)
-                    dgvSeguimientos.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                    dgvSeguimientos.CommitEdit(DataGridViewDataErrorContexts.Commit); // Asegura que el cambio se guarde inmediatamente
             };
 
-            var estadoCol = new DataGridViewComboBoxColumn
+            var estadoCol = new DataGridViewComboBoxColumn // Columna para cambiar el estado del pedido
             {
                 Name = "EstadoCombo",
                 HeaderText = "Cambiar Estado",
@@ -714,7 +716,7 @@ namespace TP4_LEANDRO
             panelHistorial = new Panel
             {
                 Size = new Size(900, 600),
-                BackColor = Color.FromArgb(250, 250, 250), // Color más claro para diferenciarlo
+                BackColor = Color.FromArgb(250, 250, 250), 
                 Visible = false,
                 BorderStyle = BorderStyle.FixedSingle
             };
@@ -847,7 +849,7 @@ namespace TP4_LEANDRO
             btnLateralTecnicoInicio.Click += (s, e) => MostrarPanelInicioTecnico();
             panelMenuLateralTecnico.Controls.Add(btnLateralTecnicoInicio);
 
-            panelInicioTecnico.Controls.AddRange(new Control[] {
+            panelInicioTecnico.Controls.AddRange(new Control[] { // Etiqueta de resumen, lista de tickets pendientes y resueltos, y botón de volver
     lblInicioTecnicoResumen, lblPendientes, listViewPendientes, lblResueltos, listViewResueltos, btnInicioTecnicoVolver
 });
             this.Controls.Add(panelInicioTecnico);
@@ -1157,6 +1159,7 @@ namespace TP4_LEANDRO
                 Size = new Size(450, 450),
                 BackColor = Color.White
             };
+            // Botones del menú principal
             btnMenuAgregarPedido = new Button { Text = "Agregar Pedido", Top = 100, Left = 100, Width = 250, Height = 50, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
             btnMenuHistorial = new Button { Text = "Ver Historial de Pedidos", Top = 180, Left = 100, Width = 250, Height = 50, BackColor = Color.FromArgb(220, 36, 31), ForeColor = Color.White };
             btnMenuSalir = new Button { Text = "Salir", Top = 340, Left = 100, Width = 250, Height = 50, BackColor = Color.Gray, ForeColor = Color.White };
@@ -1240,12 +1243,12 @@ namespace TP4_LEANDRO
             btnCancelar.Click += BtnCancelar_Click;
             btnVerDetalles = new Button { Text = "Ver Detalles", Top = 380, Left = 310, Width = 120, Height = 40, BackColor = Color.LightBlue, ForeColor = Color.Black };
             btnVerDetalles.Click += BtnVerDetalles_Click;
-            // Crear el botón Descargar
+            // Crear el botón Descargar de la etiqueta
             btnDescargarLista = new Button
             {
                 Text = "Descargar",
                 Top = 380,
-                Left = 450, // Ajusta la posición según tu diseño
+                Left = 450, 
                 Width = 120,
                 Height = 40,
                 BackColor = Color.FromArgb(33, 150, 243),
@@ -1287,7 +1290,7 @@ namespace TP4_LEANDRO
             });
             this.Controls.Add(panelEditarPedido);
 
-            // Panel Soporte Técnico (centrado)
+            // Panel Soporte Técnico 
             panelSoporte = new Panel { Size = new Size(600, 350), BackColor = Color.White, Visible = false };
             lblSoporteInfo = new Label
             {
@@ -1374,17 +1377,18 @@ namespace TP4_LEANDRO
         }
         private void BtnDescargarEtiqueta_Click(object? sender, EventArgs e)
         {
+            // Verifica si hay un pedido actual para descargar la etiqueta
             if (pedidoActual == null)
             {
                 MostrarAviso("Error", "No hay pedido para descargar.");
                 return;
             }
-
-            using (var sfd = new SaveFileDialog())
+            // 
+            using (var sfd = new SaveFileDialog()) // Abre el diálogo para guardar la etiqueta
             {
-                sfd.Filter = "Imagen PNG (*.png)|*.png";
-                sfd.FileName = $"Etiqueta_{pedidoActual.NumeroSeguimiento}.png";
-                if (sfd.ShowDialog() == DialogResult.OK)
+                sfd.Filter = "Imagen PNG (*.png)|*.png"; // Filtro para guardar como PNG
+                sfd.FileName = $"Etiqueta_{pedidoActual.NumeroSeguimiento}.png"; // Nombre por defecto del archivo
+                if (sfd.ShowDialog() == DialogResult.OK) // Si el usuario selecciona un archivo
                 {
                     // Datos de la etiqueta
                     string[] lineas = {
@@ -1399,12 +1403,12 @@ namespace TP4_LEANDRO
 
                     // Configuración de la imagen
                     int width = 500;
-                    int height = 40 + lineas.Length * 40 + 30;
-                    using (var bmp = new Bitmap(width, height))
-                    using (var g = Graphics.FromImage(bmp))
+                    int height = 40 + lineas.Length * 40 + 30; //El bitmap es para acomodar todas las líneas de texto y la instrucción
+                    using (var bmp = new Bitmap(width, height)) // Crea un bitmap para la etiqueta
+                    using (var g = Graphics.FromImage(bmp)) // Crea un objeto Graphics para dibujar en el bitmap
                     {
-                        g.Clear(Color.White);
-                        using (var font = new Font("Segoe UI", 16, FontStyle.Bold))
+                        g.Clear(Color.White); // Limpia el fondo a blanco
+                        using (var font = new Font("Segoe UI", 16, FontStyle.Bold)) // Fuente para el título
                         using (var font2 = new Font("Segoe UI", 13, FontStyle.Regular))
                         using (var brush = new SolidBrush(Color.Black))
                         using (var brushRed = new SolidBrush(Color.FromArgb(220, 36, 31)))
@@ -1414,23 +1418,23 @@ namespace TP4_LEANDRO
                             // Resto de los datos
                             for (int i = 1; i < lineas.Length; i++)
                             {
-                                g.DrawString(lineas[i], font2, brush, 20, 20 + i * 40);
+                                g.DrawString(lineas[i], font2, brush, 20, 20 + i * 40); //El drawstring es para dibujar cada línea de texto
                             }
                             // Instrucción
-                            using (var fontInstr = new Font("Segoe UI", 12, FontStyle.Bold))
+                            using (var fontInstr = new Font("Segoe UI", 12, FontStyle.Bold)) // Fuente para la instrucción
                             {
                                 g.DrawString("Pegar esta Etiqueta en el paquete.", fontInstr, brushRed, 20, height - 35);
                             }
                         }
-                        bmp.Save(sfd.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                        bmp.Save(sfd.FileName, System.Drawing.Imaging.ImageFormat.Png); // Guarda el bitmap como PNG en la ubicación seleccionada por el usuario
                     }
-                    MostrarAviso("Etiqueta descargada", "La etiqueta se guardó correctamente como imagen PNG.");
+                    MostrarAviso("Etiqueta descargada", "La etiqueta se guardó correctamente como imagen PNG."); //Muestra el aviso de guardado
                 }
             }
         }
         private void BotonMenu_Click(object? sender, EventArgs e)
         {
-            if (sender is not Button btn) return;
+            if (sender is not Button btn) return; // Asegura que el sender sea un botón
 
             // Validación de datos de cliente solo para botones laterales
             if (btn.Parent == panelMenuLateral && !ClienteDatosCompletos())
@@ -1438,7 +1442,7 @@ namespace TP4_LEANDRO
                 MostrarAviso("Datos requeridos", "Debe ingresar su Usuario y Contraseña correctamente.");
                 return;
             }
-
+            // Lógica para mostrar el panel correspondiente según el botón presionado
             switch (btn.Text)
             {
                 case "INICIO":
@@ -1486,7 +1490,7 @@ namespace TP4_LEANDRO
             {
                 this.Controls.Add(panel);
             }
-            // Logic to center the panel
+
             panel.Location = new Point((this.ClientSize.Width - panel.Width) / 2, (this.ClientSize.Height - panel.Height) / 2);
             this.Resize += (s, e) =>
             {
@@ -1513,7 +1517,7 @@ namespace TP4_LEANDRO
         {
             if (txtLoginNombre.Text != "" && txtLoginContraseña.Text != "")
             {
-                bool loginCorrecto = pInicio.Validar(txtLoginNombre.Text, txtLoginContraseña.Text);
+                bool loginCorrecto = pInicio.Validar(txtLoginNombre.Text, txtLoginContraseña.Text); // Verifica si el usuario y contraseña son correctos
                 if (loginCorrecto)
                 {
 
@@ -1623,7 +1627,7 @@ namespace TP4_LEANDRO
             panelAviso.BringToFront();
         }
 
-        // Nuevo: Mostrar aviso con botón "Ver mis Tickets"
+        // Mostrar aviso con botón Ver mis Tickets
         public void MostrarAvisoConBotonTickets(string titulo, string mensaje)
         {
             lblAvisoTitulo.Text = titulo;
@@ -1660,7 +1664,7 @@ namespace TP4_LEANDRO
             panelAviso.BringToFront();
         }
 
-        // Nuevo: Panel para mostrar tickets enviados
+        // Panel para mostrar tickets enviados
         private void MostrarPanelTickets()
         {
             listViewTickets.Items.Clear();
@@ -1689,13 +1693,13 @@ namespace TP4_LEANDRO
                 return;
             }
 
-            // Cambia aquí: usa ConsultaSoporteExtendido
-            var consulta = new ConsultaSoporteExtendido
+
+            var consulta = new ConsultaSoporteExtendido // Crea una nueva consulta de soporte
             {
-                NombreCliente = $"{clienteActual?.Usuario} {clienteActual?.Apellido}",
-                Email = clienteActual?.Email ?? "",
+                NombreCliente = $"{clienteActual?.Usuario} {clienteActual?.Apellido}", // Nombre del cliente
+                Email = clienteActual?.Email ?? "", // Email del cliente (puede ser nulo si no se ingresó)
                 Mensaje = txtSoporteMensaje.Text,
-                Fecha = DateTime.Now,
+                Fecha = DateTime.Now, // Fecha de la consulta
                 Atendido = false // Nuevo ticket, no atendido
             };
             consultasSoporte.Add(consulta);
@@ -1707,7 +1711,7 @@ namespace TP4_LEANDRO
 
         private void BtnSiguientePedido_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtCalle.Text) ||
+            if (string.IsNullOrWhiteSpace(txtCalle.Text) || // Verifica que los campos obligatorios estén completos
                 string.IsNullOrWhiteSpace(txtNumeroCalle.Text) ||
                 string.IsNullOrWhiteSpace(txtProvincia.Text) ||
                 string.IsNullOrWhiteSpace(txtEmail.Text) ||
@@ -1756,30 +1760,31 @@ namespace TP4_LEANDRO
             listViewPedidos.Items.Clear();
             foreach (var pedido in pedidos)
             {
+                // Verifica si el pedido ya tiene un comentario asociado
                 string comentario = comentarios.ContainsKey(pedido.NumeroSeguimiento) ? comentarios[pedido.NumeroSeguimiento] : "";
                 var item = new ListViewItem(new[]
                 {
                     pedido.NumeroSeguimiento,
                     pedido.Fecha.ToString("dd/MM/yyyy HH:mm"),
                     pedido.Estado.ToString(),
-                    $"{pedido.Cliente.Calle} {pedido.Cliente.NumeroCalle}, {pedido.Cliente.Provincia}",
+                    $"{pedido.Cliente.Calle} {pedido.Cliente.NumeroCalle}, {pedido.Cliente.Provincia}", 
                     comentario
                 });
-                listViewPedidos.Items.Add(item);
+                listViewPedidos.Items.Add(item); // Agrega el pedido a la lista
             }
-            lblComentario.Text = "";
+            lblComentario.Text = ""; // Limpia el label de comentario al actualizar la lista
         }
 
         private void BtnModificar_Click(object? sender, EventArgs e)
         {
-            if (listViewPedidos.SelectedItems.Count == 0)
+            if (listViewPedidos.SelectedItems.Count == 0) // Verifica si hay un pedido seleccionado
             {
-                MostrarAviso("Atención", "Seleccione un pedido para modificar.");
+                MostrarAviso("Atención", "Seleccione un pedido para modificar."); // Si no hay selección, muestra un aviso
                 return;
             }
-            var seleccionado = listViewPedidos.SelectedItems[0];
-            var numSeguimiento = seleccionado.SubItems[0].Text;
-            var pedido = pedidos.Find(p => p.NumeroSeguimiento == numSeguimiento);
+            var seleccionado = listViewPedidos.SelectedItems[0]; // Obtiene el pedido seleccionado
+            var numSeguimiento = seleccionado.SubItems[0].Text; // Obtiene el número de seguimiento del pedido seleccionado
+            var pedido = pedidos.Find(p => p.NumeroSeguimiento == numSeguimiento); // Busca el pedido en la lista de pedidos
 
             if (pedido == null)
             {
@@ -1929,9 +1934,9 @@ namespace TP4_LEANDRO
             listViewTecnicoTickets.Items.Clear();
             foreach (var ticket in consultasSoporte)
             {
-                // Puedes agregar una propiedad "Atendido" a ConsultaSoporte si lo deseas
+                // Verifica si el ticket es de tipo ConsultaSoporteExtendido
                 string atendido = ticket is ConsultaSoporteExtendido ext && ext.Atendido ? "Sí" : "No";
-                var item = new ListViewItem(new[]
+                var item = new ListViewItem(new[] // Crea un nuevo item para el ListView
                 {
             ticket.Fecha.ToString("dd/MM/yyyy HH:mm"),
             ticket.NombreCliente,
@@ -1939,7 +1944,7 @@ namespace TP4_LEANDRO
             atendido
         });
                 item.Tag = ticket;
-                listViewTecnicoTickets.Items.Add(item);
+                listViewTecnicoTickets.Items.Add(item); // Agrega el item al ListView
 
             }
         }
@@ -1951,7 +1956,7 @@ namespace TP4_LEANDRO
                 MostrarAviso("Atención", "Seleccione un ticket para marcar como atendido.");
                 return;
             }
-            var item = listViewTecnicoTickets.SelectedItems[0];
+            var item = listViewTecnicoTickets.SelectedItems[0]; // Obtiene el ticket seleccionado
             if (item.Tag is ConsultaSoporteExtendido ticket)
             {
                 ticket.Atendido = true;
@@ -1977,6 +1982,7 @@ namespace TP4_LEANDRO
             {
                 // Busca el cliente por nombre y apellido (ajusta si usas otro identificador)
                 List<Cliente> clientes = pInicio.GetAll();
+                // Aquí se asume que el nombre del cliente es único, si no, ajusta la lógica de búsqueda
                 Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == ticket.NombreCliente);
                 if (cliente != null)
                 {
@@ -1997,9 +2003,9 @@ namespace TP4_LEANDRO
                 }
             }
         }
-        public class ConsultaSoporteExtendido : ConsultaSoporte
+        public class ConsultaSoporteExtendido : ConsultaSoporte // Clase extendida para incluir el estado de atención del ticket
         {
-            public bool Atendido { get; set; }
+            public bool Atendido { get; set; } // Propiedad para indicar si el ticket fue atendido
         }
 
         //Login Tecnico 
@@ -2020,7 +2026,6 @@ namespace TP4_LEANDRO
             }
             else
             {
-                // Ajustar tamaño y posición del panelAviso antes de crear el botón
                 panelAviso.Size = panelLoginTecnico.Size;
                 panelAviso.Location = panelLoginTecnico.Location;
                 panelAviso.BringToFront();
@@ -2028,9 +2033,9 @@ namespace TP4_LEANDRO
                 lblAvisoTitulo.Text = "Error de inicio de sesión";
                 lblAvisoMensaje.Text = "Usuario o Contraseña Incorrectos.";
                 btnAvisoCerrar.Visible = false;
-
-                // Buscar o crear el botón "Volver"
+                // Crear botón Volver si no existe
                 Button? btnVolver = null;
+                // Revisa si ya existe el botón Volver
                 foreach (Control ctrl in panelAviso.Controls)
                 {
                     if (ctrl is Button btn && btn.Name == "btnVolverAviso")
@@ -2095,7 +2100,8 @@ namespace TP4_LEANDRO
         private void MostrarPanelHistorial()
         {
             OcultarPanelesTecnico();
-            var listView = panelHistorial.Controls["listViewHistorial"] as ListView;
+            // Limpia el ListView antes de llenarlo
+            var listView = panelHistorial.Controls["listViewHistorial"] as ListView; 
             if (listView == null) return;
 
             listView.Items.Clear();
@@ -2114,25 +2120,18 @@ namespace TP4_LEANDRO
             panelHistorial.BringToFront();
             CentrarPanel(panelHistorial);
         }
-        private void MostrarPanelAcerca()
-        {
-            OcultarPanelesTecnico();
-            panelAcerca.Visible = true;
-            CentrarPanel(panelAcerca);
-            panelAcerca.BringToFront();
-        }
-
         private void MostrarPanelInicioTecnico()
         {
             OcultarPanelesTecnico();
-            // Resumen
+            // Resumen de tickets
             int pendientes = consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => !t.Atendido);
             int resueltos = consultasSoporte.OfType<ConsultaSoporteExtendido>().Count(t => t.Atendido);
             lblInicioTecnicoResumen.Text = $"Resumen de Tickets - Pendientes: {pendientes} | Resueltos: {resueltos}";
 
             // Llenar pendientes
-            listViewPendientes.Items.Clear();
-            foreach (var ticket in consultasSoporte.OfType<ConsultaSoporteExtendido>().Where(t => !t.Atendido))
+           
+            listViewPendientes.Items.Clear(); // Limpia el ListView antes de llenarlo
+            foreach (var ticket in consultasSoporte.OfType<ConsultaSoporteExtendido>().Where(t => !t.Atendido)) // Filtra los tickets pendientes
             {
                 var item = new ListViewItem(new[]
                 {
@@ -2170,7 +2169,7 @@ namespace TP4_LEANDRO
             panelAviso.Visible = false;
             panelTickets.Visible = false;
             panelEditarPedido.Visible = false;
-            panelLogin.Visible = false; // <-- Esto oculta el login del cliente
+            panelLogin.Visible = false;
             panelPrincipal.Visible = true;
             clienteActual = null;
             lblUsuario.Text = "Bienvenido";
@@ -2188,22 +2187,22 @@ namespace TP4_LEANDRO
                 );
                 dgvSeguimientos.Rows[rowIndex].Tag = pedido;
             }
-            OcultarPanelesTecnico(); // Oculta todos los paneles técnicos
+            OcultarPanelesTecnico(); 
             panelSeguimientos.Visible = true;
             CentrarPanel(panelSeguimientos);
             panelSeguimientos.BringToFront();
         }
 
-        private void DgvSeguimientos_CellValueChanged(object? sender, DataGridViewCellEventArgs e)
+        private void DgvSeguimientos_CellValueChanged(object? sender, DataGridViewCellEventArgs e) // Evento para manejar el cambio de valor en la celda del DataGridView
         {
-            if (e.RowIndex < 0) return;
+            if (e.RowIndex < 0) return; // Verifica que el índice de fila sea válido
             if (dgvSeguimientos.Columns[e.ColumnIndex].Name == "EstadoCombo")
             {
-                var row = dgvSeguimientos.Rows[e.RowIndex];
+                var row = dgvSeguimientos.Rows[e.RowIndex]; // Obtiene la fila que se modificó
                 var pedido = row.Tag as Pedido;
                 if (pedido != null)
                 {
-                    var nuevoEstadoStr = row.Cells["EstadoCombo"].Value?.ToString();
+                    var nuevoEstadoStr = row.Cells["EstadoCombo"].Value?.ToString(); // Obtiene el nuevo estado seleccionado
                     if (Enum.TryParse<EstadoPedido>(nuevoEstadoStr, out var nuevoEstado))
                     {
                         var estadoAnterior = pedido.Estado;
@@ -2239,7 +2238,7 @@ namespace TP4_LEANDRO
             panelAdminLogin.BringToFront();
         }
 
-        // Este método ya lo tienes, pero para mostrar el panel principal del administrador después del login exitoso:
+
         private void MostrarPanelAdminPrincipal()
         {
             OcultarPanelesAdmin();
@@ -2249,7 +2248,6 @@ namespace TP4_LEANDRO
             CentrarPanel(panelAdministrador);
             panelAdministrador.BringToFront();
             CargarDatosAdmin();
-            // Asegúrate de que los botones estén habilitados
             btnAdminClientes.Enabled = true;
             btnAdminTecnicos.Enabled = true;
         }
@@ -2278,10 +2276,6 @@ namespace TP4_LEANDRO
             }
         }
         private ListView listViewAdmin = null!;
-        private Button btnVerClientes = null!;
-        private Button btnVerTecnicos = null!;
-        private Button btnAgregar = null!;
-        private Button btnEditar = null!;
         private Button btnEliminar = null!;
         private Label lblAdminTitulo = null!;
         private bool mostrandoClientes = true;
@@ -2301,17 +2295,16 @@ namespace TP4_LEANDRO
         private Label lblDashboardTicketsAtendidos = null!;
         private Label lblDashboardTecnicos = null!;
         private ComboBox comboAsignarTecnico = null!;
-        private Button btnAsignarTecnico = null!;
         private Button btnCambiarEstado = null!;
 
         // Para logs de auditoría
-        private List<string> logsAuditoria = new();
+        private List<string> logsAuditoria = new(); // Lista para almacenar los logs de auditoría
 
         private List<Cliente> tecnicos = new();
         private void InicializarPanelesAdministrador()
         {
 
-            // Panel de login de administrador (igual que antes)
+            // Panel de login de administrador 
             panelAdminLogin = new Panel
             {
                 Size = new Size(400, 300),
@@ -2327,11 +2320,12 @@ namespace TP4_LEANDRO
             };
             txtAdminContraseña = new TextBox
             {
-                PlaceholderText = "Contraseña",
+                //PlaceHolder es un atributo
+                PlaceholderText = "Contraseña", // Cambia el texto del placeholder a "Contraseña"
                 Width = 250,
                 Left = 75,
                 Top = 120,
-                UseSystemPasswordChar = true
+                UseSystemPasswordChar = true // Esto oculta el texto ingresado como contraseña
             };
 
             var btnAdminEntrar = new Button
@@ -2346,7 +2340,6 @@ namespace TP4_LEANDRO
             };
             btnAdminEntrar.Click += BtnAdminEntrar_Click;
             panelAdminLogin.Controls.AddRange(new Control[] { txtAdminUsuario, txtAdminContraseña, btnAdminEntrar });
-            // Agrega esto después de btnAdminEntrar en InicializarPanelesAdministrador
             var btnAdminVolver = new Button
             {
                 Text = "Volver",
@@ -2394,7 +2387,7 @@ namespace TP4_LEANDRO
             {
                 mostrandoClientes = true;
                 lblAdminTitulo.Text = "Administración de Clientes";
-                panelAdministrador.Visible = true; // <-- Asegura que el panel se muestre
+                panelAdministrador.Visible = true; 
                 CentrarPanel(panelAdministrador);
                 panelAdministrador.BringToFront();
                 CargarDatosAdmin();
@@ -2418,7 +2411,7 @@ namespace TP4_LEANDRO
             {
                 mostrandoClientes = false;
                 lblAdminTitulo.Text = "Administración de Técnicos";
-                panelAdministrador.Visible = true; // <-- Asegura que el panel se muestre
+                panelAdministrador.Visible = true;
                 CentrarPanel(panelAdministrador);
                 panelAdministrador.BringToFront();
                 CargarDatosAdmin();
@@ -2436,9 +2429,6 @@ namespace TP4_LEANDRO
                 Font = new Font("Segoe UI", 11, FontStyle.Bold)
             };
             btnEliminar.Click += BtnEliminar_Click;
-
-            // Agrega el botón al panelAdministrador
-           
 
             btnAdminCerrarSesion = new Button
             {
@@ -2510,7 +2500,6 @@ namespace TP4_LEANDRO
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold)
             };
-            // Puedes agregar el evento después si lo necesitas
             panelAdministrador.Controls.Add(btnEliminarClientes);
 
             var btnActualizarClientes = new Button
@@ -2525,7 +2514,6 @@ namespace TP4_LEANDRO
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 11, FontStyle.Bold)
             };
-            // Puedes agregar el evento después si lo necesitas
             panelAdministrador.Controls.Add(btnActualizarClientes);
 
             panelAdministrador.Controls.AddRange(new Control[]
@@ -2607,22 +2595,22 @@ namespace TP4_LEANDRO
                 panelAviso.BringToFront();
                 return;
             }
-
+            // Verifica si el usuario ya existe
             pRegistro.Registrar_User(txtRegUsuario.Text, txtRegNombre.Text, txtRegApellido.Text, txtRegDNI.Text,
             txtRegCalle.Text, txtRegNumeroCalle.Text, txtRegProvincia.Text, txtRegEmail.Text,
             txtRegTelefono.Text, txtRegContraseña.Text);
 
-            // Puedes guardar el cliente en una lista o base de datos aquí
-            // Ejemplo: clientes.Add(nuevoCliente);
-
+            // Agrega el nuevo cliente a la lista de clientes
             MostrarAviso("Registro exitoso", "¡Cuenta creada correctamente! Ahora puede iniciar sesión.");
             panelAviso.BringToFront();
             panelRegistro.Visible = false;
             panelPrincipal.Visible = true;
         }
 
+        // Botón para cancelar el registro
         private void CargarDatosAdmin()
         {
+            // Verifica si el panel de administración ya está inicializado
             listViewAdmin.Items.Clear();
             if (mostrandoClientes)
             {
@@ -2663,6 +2651,7 @@ namespace TP4_LEANDRO
         {
             var form = new Form
             {
+                
                 Text = mostrandoClientes ? "Agregar Cliente" : "Agregar Técnico",
                 Size = new Size(350, 400),
                 StartPosition = FormStartPosition.CenterParent
@@ -2689,11 +2678,12 @@ namespace TP4_LEANDRO
                 };
                 if (mostrandoClientes)
                 {
-                    // clientes.Add(nuevo);
+                    // clientes.Add // Agrega el nuevo cliente a la lista de clientes
                     logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{nuevo.Usuario}|Agregó el cliente {nuevo.Nombre} {nuevo.Apellido}");
                 }
                 else
                 {
+                    // Agrega el nuevo técnico a la lista de técnicos
                     tecnicos.Add(nuevo);
                     logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{nuevo.Usuario}|Agregó el técnico {nuevo.Nombre} {nuevo.Apellido}");
                 }
@@ -2706,16 +2696,18 @@ namespace TP4_LEANDRO
 
         private void BtnEditar_Click(object? sender, EventArgs e)
         {
-            if (listViewAdmin.SelectedItems.Count == 0) return;
-            var seleccionado = listViewAdmin.SelectedItems[0].Tag as Cliente;
+            // Verifica si hay un elemento seleccionado en el ListView
+            if (listViewAdmin.SelectedItems.Count == 0) return; // Si no hay selección, no hace nada
+            var seleccionado = listViewAdmin.SelectedItems[0].Tag as Cliente; // Obtiene el cliente o técnico seleccionado
             if (seleccionado == null) return;
 
-            var form = new Form
+            var form = new Form // Crea un nuevo formulario para editar
             {
                 Text = mostrandoClientes ? "Editar Cliente" : "Editar Técnico",
                 Size = new Size(350, 400),
                 StartPosition = FormStartPosition.CenterParent
             };
+            // Crea los controles de texto para editar los datos del cliente o técnico
             var txtUsuario = new TextBox { Text = seleccionado.Usuario, Top = 20, Left = 30, Width = 250 };
             var txtNombre = new TextBox { Text = seleccionado.Nombre, Top = 60, Left = 30, Width = 250 };
             var txtApellido = new TextBox { Text = seleccionado.Apellido, Top = 100, Left = 30, Width = 250 };
@@ -2748,8 +2740,6 @@ namespace TP4_LEANDRO
             {
                 if (mostrandoClientes)
                 {
-                    // Eliminar de la lista real de clientes
-                    // clientes.Remove(seleccionado);
                     logsAuditoria.Add($"{DateTime.Now:dd/MM/yyyy HH:mm}|{(seleccionado?.Usuario ?? "Desconocido")}|Eliminó el cliente {seleccionado?.Nombre} {seleccionado?.Apellido}");
                 }
                 else
@@ -2848,7 +2838,7 @@ namespace TP4_LEANDRO
             panelAdminAuditoria.Visible = false;
             panelAdminDashboard.Visible = false;
 
-            // Cargar pedidos
+            // Cargar pedidos en el adminPedidos panel
             listViewAdminPedidos.Items.Clear();
             foreach (var pedido in pedidos)
             {
@@ -2867,7 +2857,7 @@ namespace TP4_LEANDRO
 
         private void MostrarPanelAdminAuditoria()
         {
-            panelMenuLateralAdmin.Visible = true; // <-- Asegura que el menú lateral esté visible
+            panelMenuLateralAdmin.Visible = true;
             OcultarPanelesAdmin();
             CentrarPanel(panelAdminAuditoria);
             panelAdminAuditoria.Visible = true;
@@ -2885,27 +2875,27 @@ namespace TP4_LEANDRO
                     listViewAdminAuditoria.Items.Add(new ListViewItem(partes));
             }
 
-            // 1. Cargar registros de la base de datos
-            var auditorias = pAusitoria.GetAllAuditoria();
+
+            var auditorias = pAusitoria.GetAllAuditoria(); // Obtiene todas las auditorías desde la base de datos o fuente de datos
             foreach (var a in auditorias)
             {
-                // Asume que las columnas son: Fecha, Usuario, Acción
+                // Crea un nuevo ListViewItem con los datos de la auditoría
                 var item = new ListViewItem(new[] { a.Fecha, a.Usuario, a.Accion });
                 listViewAdminAuditoria.Items.Add(item);
             }
-
+            // Registrar auditoría de carga de datos
             foreach (ListViewItem item in listViewAdminAuditoria.Items)
             {
                 string fecha = item.SubItems[0].Text;
                 string usuario = item.SubItems[1].Text;
                 string accion = item.SubItems[2].Text;
-                TP4_LEANDRO.Controladores.pAusitoria.Registrar_Auditoria(fecha, usuario, accion);
+                TP4_LEANDRO.Controladores.pAusitoria.Registrar_Auditoria(fecha, usuario, accion); // Guarda cada auditoría en la base de datos o fuente de datos
             }
         }
 
         private void MostrarPanelAdminDashboard()
         {
-            panelMenuLateralAdmin.Visible = true; // <-- Asegura que el menú lateral esté visible
+            panelMenuLateralAdmin.Visible = true;
             OcultarPanelesAdmin();
             CentrarPanel(panelAdminDashboard);
             panelAdministrador.Visible = false;
@@ -2923,8 +2913,6 @@ namespace TP4_LEANDRO
 
         private void BtnAsignarTecnico_Click(object? sender, EventArgs e)
         {
-            // Aquí va la lógica para asignar técnico a un pedido
-            // Por ejemplo, puedes mostrar un mensaje temporal:
             MessageBox.Show("Funcionalidad de asignar técnico aún no implementada.");
         }
 
@@ -2935,7 +2923,7 @@ namespace TP4_LEANDRO
                 MessageBox.Show("Seleccione un pedido para cambiar el estado.");
                 return;
             }
-
+            // Obtener el pedido seleccionado
             var item = listViewAdminPedidos.SelectedItems[0];
             var pedido = item.Tag as Pedido;
             if (pedido == null) return;
@@ -2964,6 +2952,7 @@ namespace TP4_LEANDRO
                     Width = 280,
                     DropDownStyle = ComboBoxStyle.DropDownList
                 };
+                // Agrega los estados al ComboBox
                 combo.Items.AddRange(Enum.GetNames(typeof(EstadoPedido)));
                 combo.SelectedItem = pedido.Estado.ToString();
 
@@ -2983,7 +2972,7 @@ namespace TP4_LEANDRO
                     Width = 100,
                     DialogResult = DialogResult.Cancel
                 };
-
+                // Asigna el evento de clic para el botón Aceptar 
                 form.Controls.Add(label);
                 form.Controls.Add(combo);
                 form.Controls.Add(btnAceptar);
@@ -2991,6 +2980,7 @@ namespace TP4_LEANDRO
                 form.AcceptButton = btnAceptar;
                 form.CancelButton = btnCancelar;
 
+                // Muestra el formulario modal y espera la respuesta del usuario
                 if (form.ShowDialog() == DialogResult.OK && combo.SelectedItem != null)
                 {
                     if (Enum.TryParse<EstadoPedido>(combo.SelectedItem.ToString(), out var nuevoEstado))
@@ -3004,7 +2994,6 @@ namespace TP4_LEANDRO
             }
         }
 
-        // Agrega este método en tu clase Form1:
         private void OcultarPanelesAdmin()
         {
             panelAdministrador.Visible = false;
@@ -3013,23 +3002,6 @@ namespace TP4_LEANDRO
             panelAdminDashboard.Visible = false;
         }
 
-        private void MostrarPanelDatosCliente(Cliente cliente)
-        {
-            lblDatosCliente.Text =
-                $"Nombre: {cliente.Nombre}\n" +
-                $"Apellido: {cliente.Apellido}\n" +
-                $"DNI: {cliente.DNI}\n" +
-                $"Usuario: {cliente.Usuario}\n" +
-                $"Email: {cliente.Email}\n" +
-                $"Teléfono: {cliente.Telefono}\n" +
-                $"Dirección: {cliente.Calle} {cliente.NumeroCalle}, {cliente.Provincia}";
-            panelTecnico.Visible = false;
-            panelDatosCliente.Visible = true;
-            CentrarPanel(panelDatosCliente);
-            panelDatosCliente.BringToFront();
-        }
-
-        // Agrega este método en tu clase Form1:
         private void OcultarTodosLosPaneles()
         {
             // Paneles cliente

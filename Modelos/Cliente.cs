@@ -2,8 +2,8 @@
 
 namespace TP4_LEANDRO.Modelos
 {
-    [Serializable]
-    public class Cliente // Cambiado a 'public'
+    [Serializable] // Puede ser transmitido a través de la red o guardado en un archivo
+    public class Cliente 
     {
         public int ID {  get; set; }
         public string Usuario { get; set; }

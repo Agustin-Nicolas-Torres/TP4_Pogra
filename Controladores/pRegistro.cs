@@ -25,11 +25,11 @@ namespace TP4_LEANDRO.Controladores
 
             // Verifica si el usuario ya existe en la base de datos
             List<Cliente> clientes = pInicio.GetAll();
+            // Si el usuario ya existe, no se realiza la inserción
             Cliente cliente = clientes.FirstOrDefault(c => c.Usuario == usuario);
 
             if (cliente != null)
             {
-                // El usuario ya existe, no se realiza la inserción
                 return;
             }
 

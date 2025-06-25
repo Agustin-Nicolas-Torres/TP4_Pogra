@@ -13,13 +13,14 @@ namespace TP4_LEANDRO.Controladores
         public static List<Auditoria> GetAllAuditoria()
         {
             List<Auditoria> Audit = new List<Auditoria>();
-
+            // Asegura que la conexión esté abierta
             SQLiteCommand cmd = new SQLiteCommand("SELECT ID, Fecha, Usuario, Accion FROM Auditoria");
             cmd.Connection = Conexion.Connection;
             SQLiteDataReader Audit_Conec = cmd.ExecuteReader();
 
             while (Audit_Conec.Read())
             {
+                // Crea una nueva instancia de Auditoria y asigna los valores leídos
                 Auditoria a = new Auditoria();
                 a.ID = Audit_Conec.GetInt32(0);
                 a.Fecha = Audit_Conec.GetString(1);
@@ -36,7 +37,7 @@ namespace TP4_LEANDRO.Controladores
     string usuario,
     string accion)
         {
-            // Verifica si ya existe un registro igual (opcional, puedes quitar esta validación si quieres permitir duplicados)
+            // Verifica si ya existe un registro igual
             using (var cmdCheck = new SQLiteCommand("SELECT COUNT(*) FROM Auditoria WHERE Fecha = @fecha AND Usuario = @usuario AND Accion = @accion", Conexion.Connection))
             {
                 cmdCheck.Parameters.AddWithValue("@fecha", fecha);
@@ -45,12 +46,11 @@ namespace TP4_LEANDRO.Controladores
                 long count = (long)cmdCheck.ExecuteScalar();
                 if (count > 0)
                 {
-                    // Ya existe un registro igual, no se realiza la inserción
                     return;
                 }
             }
 
-            // Calcula el nuevo ID (opcional, si tu tabla es AUTOINCREMENT puedes omitirlo y no incluir el campo ID en el insert)
+            // Calcula el nuevo ID 
             int nuevoId = 1;
             using (var cmdId = new SQLiteCommand("SELECT IFNULL(MAX(Id), 0) + 1 FROM Auditoria", Conexion.Connection))
             {
